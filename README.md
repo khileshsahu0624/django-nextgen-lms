@@ -57,3 +57,18 @@ A modern, production-ready Learning Management System built with Django. This pl
 - **Database:** MySQL
 - **Frontend:** HTML5, CSS3 Variables, Vanilla JS, FontAwesome
 - **Analytics:** Chart.js
+
+# 1. Switch to the main branch
+git checkout main
+
+# 2. Pull latest changes from GitHub (just to be safe)
+git pull origin main
+
+# 3. Merge your code from the 'khilesh' branch into main
+git merge khilesh
+
+# 4. Push the merged code to GitHub
+git push origin main
+
+# 5. Switch back to your working branch so you can keep coding!
+git checkout khilesh
