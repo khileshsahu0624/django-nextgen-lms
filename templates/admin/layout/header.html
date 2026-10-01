@@ -1,0 +1,47 @@
+<header class="admin-header">
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <button id="sidebarToggle" style="background: none; border: none; font-size: 1.25rem; color: var(--admin-text-main); cursor: pointer; padding: 0.5rem;">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-bar" style="position: relative; width: 300px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--admin-text-light);"></i>
+            <input type="text" placeholder="Search..." style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 2rem; border: 1px solid var(--admin-border); outline: none; background: #f9fafb;">
+        </div>
+    </div>
+    
+    <div class="header-profile" style="display: flex; align-items: center; gap: 1.5rem;">
+        <div class="notifications" style="position: relative; cursor: pointer; color: var(--admin-text-light);">
+            <i class="fa-regular fa-bell" style="font-size: 1.25rem;"></i>
+            <span style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; font-weight: bold;">3</span>
+        </div>
+        
+        <div class="user-menu" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border-left: 1px solid var(--admin-border); padding-left: 1.5rem;">
+            <div style="text-align: right;">
+                <div style="font-size: 0.875rem; font-weight: 600;">{{ request.user.first_name }}</div>
+                <div style="font-size: 0.75rem; color: var(--admin-text-light); text-transform: capitalize;">{{ request.user.role }}</div>
+            </div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--admin-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">
+                {{ request.user.first_name|slice:":1"|upper }}
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toggleBtn = document.getElementById('sidebarToggle');
+        toggleBtn.addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-collapsed');
+            
+            // If chart exists, tell Chart.js to resize after css transition
+            setTimeout(() => {
+                if(window.revenueChart) {
+                    window.revenueChart.resize();
+                } else {
+                    // Quick hack to trigger window resize event for chartjs
+                    window.dispatchEvent(new Event('resize'));
+                }
+            }, 300);
+        });
+    });
+</script>

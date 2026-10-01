@@ -1,0 +1,428 @@
+{% extends 'user/layout/base.html' %}
+
+{% block title %}Welcome to NextGen LMS - Master Your Skills{% endblock %}
+
+{% block content %}
+<style>
+  /* Reset & Base Styles */
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary: #10b981;
+    --dark: #1f2937;
+    --light: #f9fafb;
+    --text-muted: #6b7280;
+  }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    margin: 0; padding: 0;
+    color: var(--dark); background-color: #ffffff;
+    line-height: 1.5;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+  section { padding: 5rem 0; }
+  .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 800; color: var(--dark); }
+  .section-subtitle { text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.125rem; }
+
+  /* Buttons */
+  .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; }
+  .btn-primary { background-color: var(--primary); color: white; }
+  .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+  .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+  .btn-outline:hover { background-color: var(--primary); color: white; }
+
+  /* Hero Section */
+  .hero { background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%); padding: 8rem 0; text-align: center; }
+  .hero h1 { font-size: 4rem; font-weight: 900; margin-bottom: 1.5rem; line-height: 1.1; background: -webkit-linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 700px; margin: 0 auto 2.5rem auto; }
+
+  /* Trusted By */
+  .partners { background-color: var(--light); padding: 3rem 0; border-bottom: 1px solid #e5e7eb; }
+  
+  /* Statistics */
+  .stats { background-color: var(--primary); color: white; padding: 4rem 0; }
+
+  /* Features */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .feature-card { padding: 2rem; border-radius: 1rem; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border: 1px solid #f3f4f6; transition: transform 0.3s ease; }
+  .feature-card:hover { transform: translateY(-10px); }
+  .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  /* Course Filters */
+  .filter-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 3rem; }
+  .filter-btn { padding: 0.5rem 1.5rem; border-radius: 2rem; background: var(--light); border: 1px solid #e5e7eb; color: var(--dark); font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* Popular Courses */
+  .courses { background-color: var(--light); }
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+  .course-card { background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; transition: all 0.3s ease; display: flex; flex-direction: column; }
+  .course-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+  .course-img { width: 100%; height: 200px; background-color: #e5e7eb; background-size: cover; background-position: center; }
+  .course-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+  .course-category { color: var(--primary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .course-title { font-size: 1.25rem; font-weight: 800; margin: 0.5rem 0; line-height: 1.3; }
+  .course-price { font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-top: auto; padding-top: 1rem; border-top: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;}
+  
+  /* Course Badge */
+  .course-badge { background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem; }
+
+  /* Testimonials */
+  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .testimonial-card { padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; display: flex; flex-direction: column; }
+  .stars { color: #fbbf24; margin-bottom: 1rem; font-size: 1.25rem; letter-spacing: 2px; }
+  .user-profile { display: flex; align-items: center; gap: 1rem; margin-top: auto; padding-top: 1.5rem; }
+  .user-avatar { width: 50px; height: 50px; border-radius: 50%; background-size: cover; background-position: center; }
+
+  /* Instructors */
+  .instructors { background-color: var(--light); }
+  .instructor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+  .instructor-card { text-align: center; background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+  .instructor-img { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1rem auto; background-size: cover; background-position: center; border: 4px solid var(--light); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+  /* Pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center; }
+  .pricing-card { background: white; padding: 3rem 2rem; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; text-align: center; }
+  .pricing-card.popular { border: 2px solid var(--primary); transform: scale(1.05); box-shadow: 0 20px 40px rgba(79,70,229,0.15); }
+  .price { font-size: 3.5rem; font-weight: 900; margin: 1.5rem 0; color: var(--dark); }
+  .pricing-features { list-style: none; padding: 0; margin-bottom: 2rem; text-align: left; }
+  .pricing-features li { margin-bottom: 1rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+  .pricing-features li::before { content: '✓'; color: var(--primary); font-weight: bold; }
+
+  /* CTA */
+  .cta-section { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; text-align: center; padding: 6rem 0; }
+</style>
+
+<!-- 1. Hero Section -->
+<section class="hero">
+  <div class="container">
+    <h1>India's #1 Learning Platform</h1>
+    <p>Build skills with courses, certificates, and degrees online from India's top universities and industry experts.</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+      <a href="#courses" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Explore All Courses</a>
+      <a href="#" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 1.1rem; background: white;">Join for Free</a>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Trusted By / Partners -->
+<section class="partners">
+  <div class="container" style="text-align: center;">
+    <p style="color: var(--text-muted); font-weight: 700; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 2px; font-size: 0.875rem;">Trusted by top companies in India</p>
+    <div style="display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; opacity: 0.5; filter: grayscale(100%); font-size: 1.5rem; font-weight: 800; align-items: center;">
+      <span>TCS</span>
+      <span>Infosys</span>
+      <span>Wipro</span>
+      <span>Flipkart</span>
+      <span>Zomato</span>
+      <span>Google India</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Courses with Filters -->
+<section class="courses" id="courses">
+  <div class="container">
+    <h2 class="section-title">Discover the perfect course</h2>
+    <p class="section-subtitle">We have a massive catalog of courses tailored for the Indian job market.</p>
+    
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterCourses('all')">All Courses</button>
+      <button class="filter-btn" onclick="filterCourses('development')">Development</button>
+      <button class="filter-btn" onclick="filterCourses('design')">Design</button>
+      <button class="filter-btn" onclick="filterCourses('data')">Data Science</button>
+      <button class="filter-btn" onclick="filterCourses('business')">Business</button>
+    </div>
+
+    <!-- Massive Course Grid -->
+    <div class="course-grid" id="courseGrid">
+      
+      <!-- Development Courses -->
+      <div class="course-card" data-category="development">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Development</span>
+          <h3 class="course-title">React & Next.js: The Complete Guide</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Master modern web development by building real-world applications.</p>
+          <div class="course-price">
+            <div>₹3,499 <span style="font-size: 0.9rem; color: var(--text-muted); text-decoration: line-through; font-weight:normal;">₹9,999</span></div>
+            <span class="course-badge">Best Seller</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card" data-category="development">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1526925539332-aa3b66e35444?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Development</span>
+          <h3 class="course-title">Python for Absolute Beginners</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Start your programming journey with the most popular language in India.</p>
+          <div class="course-price"><div>₹1,999</div></div>
+        </div>
+      </div>
+
+      <div class="course-card" data-category="development">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Development</span>
+          <h3 class="course-title">Backend APIs with Django REST</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Learn to build scalable, robust APIs using Python and Django.</p>
+          <div class="course-price"><div>₹2,499</div></div>
+        </div>
+      </div>
+
+      <!-- Design Courses -->
+      <div class="course-card" data-category="design">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Design</span>
+          <h3 class="course-title">UI/UX Design Masterclass</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Create stunning, user-centric interfaces from scratch using Figma.</p>
+          <div class="course-price">
+            <div>₹2,999</div>
+            <span class="course-badge" style="background: #dbeafe; color: #3b82f6;">New</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card" data-category="design">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Design</span>
+          <h3 class="course-title">Advanced CSS & Animations</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Bring your web pages to life with complex CSS3 animations.</p>
+          <div class="course-price"><div>₹1,499</div></div>
+        </div>
+      </div>
+
+      <!-- Data Science Courses -->
+      <div class="course-card" data-category="data">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Data Science</span>
+          <h3 class="course-title">Machine Learning A-Z</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Learn Python, Pandas, Scikit-learn, and Neural Networks.</p>
+          <div class="course-price"><div>₹4,999</div></div>
+        </div>
+      </div>
+
+      <div class="course-card" data-category="data">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Data Science</span>
+          <h3 class="course-title">Data Analytics & Visualization</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Master Tableau, PowerBI, and SQL to become a Data Analyst.</p>
+          <div class="course-price"><div>₹3,999</div></div>
+        </div>
+      </div>
+
+      <!-- Business Courses -->
+      <div class="course-card" data-category="business">
+        <div class="course-img" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600');"></div>
+        <div class="course-content">
+          <span class="course-category">Business</span>
+          <h3 class="course-title">Digital Marketing Pro</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">SEO, Social Media, and Google Ads strategies that actually work.</p>
+          <div class="course-price"><div>₹2,499</div></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- 4. Huge Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <h2 class="section-title">Wall of Love</h2>
+    <p class="section-subtitle">Hear from our community of over 100,000 successful students across India.</p>
+    
+    <div class="testimonials-grid">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"This platform changed my life! The React course helped me land a high-paying job at TCS within just 3 months of graduating from my engineering college."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/34.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Rahul Sharma</h4><span style="font-size:0.85rem; color:var(--text-muted);">Frontend Developer, Pune</span></div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"The UI/UX Masterclass is easily the best investment I've made. The hands-on projects gave me a stellar portfolio that got me hired in Bangalore."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/45.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Priya Desai</h4><span style="font-size:0.85rem; color:var(--text-muted);">Product Designer, Bangalore</span></div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"I went from knowing zero Python to building AI models. The instructors explain complex concepts in Hindi and English so simply."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/51.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Amit Kumar</h4><span style="font-size:0.85rem; color:var(--text-muted);">Data Analyst, Delhi</span></div>
+        </div>
+      </div>
+
+      <!-- Testimonial 4 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"As a small business owner in Mumbai, the Digital Marketing course helped me double my sales in 6 months without paying heavy agency fees."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/12.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Ananya Singh</h4><span style="font-size:0.85rem; color:var(--text-muted);">Entrepreneur, Mumbai</span></div>
+        </div>
+      </div>
+
+      <!-- Testimonial 5 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"The Django backend course is phenomenal. It goes deep into security, APIs, and database optimization. A+ for Indian tech jobs."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/82.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Vikram Iyer</h4><span style="font-size:0.85rem; color:var(--text-muted);">Backend Engineer, Hyderabad</span></div>
+        </div>
+      </div>
+
+      <!-- Testimonial 6 -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"I love that I have lifetime access. I constantly refer back to the videos when I get stuck at work in my Wipro projects."</p>
+        <div class="user-profile">
+          <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/22.jpg');"></div>
+          <div><h4 style="margin:0; font-weight:700;">Neha Gupta</h4><span style="font-size:0.85rem; color:var(--text-muted);">Web Developer, Chennai</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Instructors Network -->
+<section class="instructors">
+  <div class="container">
+    <h2 class="section-title">Learn from the very best</h2>
+    <p class="section-subtitle">Our instructors are active industry leaders from top global and Indian companies.</p>
+    
+    <div class="instructor-grid">
+      <div class="instructor-card">
+        <div class="instructor-img" style="background-image: url('https://randomuser.me/api/portraits/men/33.jpg');"></div>
+        <h3 style="margin-bottom: 0.25rem;">Kunal Shah</h3>
+        <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">Ex-Flipkart Engineer</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Teaches React & Node</p>
+      </div>
+      
+      <div class="instructor-card">
+        <div class="instructor-img" style="background-image: url('https://randomuser.me/api/portraits/women/24.jpg');"></div>
+        <h3 style="margin-bottom: 0.25rem;">Aditi Rao</h3>
+        <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">Data Scientist @ Google India</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Teaches Python & ML</p>
+      </div>
+
+      <div class="instructor-card">
+        <div class="instructor-img" style="background-image: url('https://randomuser.me/api/portraits/men/67.jpg');"></div>
+        <h3 style="margin-bottom: 0.25rem;">Rohan Kapoor</h3>
+        <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">Head of Design, Zomato</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Teaches Figma & UX</p>
+      </div>
+
+      <div class="instructor-card">
+        <div class="instructor-img" style="background-image: url('https://randomuser.me/api/portraits/women/62.jpg');"></div>
+        <h3 style="margin-bottom: 0.25rem;">Pooja Mehta</h3>
+        <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">CMO @ Startup India</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Teaches Marketing</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Extended Pricing -->
+<section class="pricing">
+  <div class="container">
+    <h2 class="section-title">Simple, Transparent Pricing</h2>
+    <p class="section-subtitle">Flexible plans for individuals and teams in India.</p>
+    
+    <div class="pricing-grid">
+      <!-- Basic -->
+      <div class="pricing-card">
+        <h3>Basic Plan</h3>
+        <div class="price">₹499<span style="font-size: 1rem; color: var(--text-muted);">/mo</span></div>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Perfect for casual learners and college students.</p>
+        <ul class="pricing-features">
+          <li>Access to 100+ basic courses</li>
+          <li>Community support group</li>
+          <li>Standard video quality</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width: 100%; box-sizing: border-box;">Start Basic</a>
+      </div>
+      
+      <!-- Pro -->
+      <div class="pricing-card popular">
+        <div style="background: var(--primary); color: white; padding: 0.25rem 1rem; border-radius: 1rem; display: inline-block; margin-bottom: 1rem; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">MOST POPULAR</div>
+        <h3>Pro Plan</h3>
+        <div class="price">₹1,499<span style="font-size: 1rem; color: var(--text-muted);">/mo</span></div>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">For serious career growth and placements.</p>
+        <ul class="pricing-features">
+          <li>Access to all Premium courses</li>
+          <li>Downloadable Hindi/English notes</li>
+          <li>Verified Certificates for LinkedIn</li>
+          <li>Priority Q&A support</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width: 100%; box-sizing: border-box;">Go Pro Now</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="price">₹4,999<span style="font-size: 1rem; color: var(--text-muted);">/mo</span></div>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">For startups and corporate teams.</p>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>Dedicated Account Manager</li>
+          <li>Team progress tracking</li>
+          <li>Custom learning paths</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width: 100%; box-sizing: border-box;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: 800;">Ready to transform your career?</h2>
+    <p style="font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 3rem auto;">Join our network of over 100,000 students across India and start learning today.</p>
+    <form style="display: flex; justify-content: center; max-width: 500px; margin: 0 auto; gap: 0.5rem;">
+      <input type="email" placeholder="Enter your email address" required style="flex: 1; padding: 1.25rem; border-radius: 0.5rem; border: none; font-size: 1rem;">
+      <button type="submit" class="btn" style="background-color: var(--dark); color: white; padding: 0 2rem;">Get Started</button>
+    </form>
+  </div>
+</section>
+
+<script>
+  // Simple Course Filter Logic
+  function filterCourses(category) {
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Filter courses
+    const courses = document.querySelectorAll('.course-card');
+    courses.forEach(course => {
+      if (category === 'all' || course.getAttribute('data-category') === category) {
+        course.style.display = 'flex';
+      } else {
+        course.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

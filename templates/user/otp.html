@@ -1,0 +1,95 @@
+{% extends 'user/layout/base.html' %}
+
+{% block title %}Verify OTP - NextGen LMS{% endblock %}
+
+{% block content %}
+<style>
+  body { background-color: #f9fafb; }
+  .auth-container {
+    min-height: calc(100vh - 80px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .auth-card {
+    background: white;
+    width: 100%; max-width: 400px;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+    text-align: center;
+  }
+  .auth-header { margin-bottom: 2rem; }
+  .auth-header h1 { font-size: 2rem; font-weight: 800; color: #111827; margin-bottom: 0.5rem; }
+  .auth-header p { color: #6b7280; font-size: 1rem; }
+  
+  .otp-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .otp-input {
+    width: 45px; height: 55px;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1.5rem; font-weight: 700;
+    text-align: center;
+    color: #111827;
+    transition: all 0.2s;
+  }
+  
+  .otp-input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+  
+  .btn-auth {
+    width: 100%; padding: 1rem; background: #4f46e5; color: white;
+    border: none; border-radius: 0.75rem; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+  }
+  .btn-auth:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
+
+</style>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+      <h1>Verify OTP</h1>
+      <p>We've sent a 6-digit code to your phone number +91 98****3210.</p>
+    </div>
+    
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="otp-container">
+        <input type="text" maxlength="1" class="otp-input" required>
+        <input type="text" maxlength="1" class="otp-input" required>
+        <input type="text" maxlength="1" class="otp-input" required>
+        <input type="text" maxlength="1" class="otp-input" required>
+        <input type="text" maxlength="1" class="otp-input" required>
+        <input type="text" maxlength="1" class="otp-input" required>
+      </div>
+      
+      <button type="submit" class="btn-auth">Verify & Continue</button>
+    </form>
+    
+    <p style="text-align: center; margin-top: 2rem; color: #6b7280; font-size: 0.875rem;">
+      Didn't receive the code? <a href="#" style="color: #4f46e5; font-weight: 700; text-decoration: none;">Resend OTP</a> (00:30)
+    </p>
+  </div>
+</div>
+
+<script>
+  // Simple JS to auto-focus next OTP input
+  const inputs = document.querySelectorAll('.otp-input');
+  inputs.forEach((input, index) => {
+    input.addEventListener('keyup', (e) => {
+      if(e.key >= 0 && e.key <= 9) {
+        if(index < inputs.length - 1) inputs[index + 1].focus();
+      } else if (e.key === 'Backspace') {
+        if(index > 0) inputs[index - 1].focus();
+      }
+    });
+  });
+</script>
+{% endblock %}

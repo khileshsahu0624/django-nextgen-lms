@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}User Dashboard - LMS{% endblock %}</title>
+    <!-- CSS Links here -->
+</head>
+<body>
+    {% include 'user/layout/header.html' %}
+
+    <main>
+        {% block content %}
+        <!-- Main content goes here -->
+        {% endblock %}
+    </main>
+
+    {% include 'user/layout/footer.html' %}
+</body>
+</html>

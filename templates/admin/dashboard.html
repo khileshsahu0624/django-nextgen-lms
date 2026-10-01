@@ -1,0 +1,527 @@
+{% extends 'admin/layout/base.html' %}
+{% block title %}Dashboard | Production LMS{% endblock %}
+
+  {% block extra_css %}
+    <style>
+      /* Stats Cards */
+      .stat-card {
+        background: var(--admin-surface);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--admin-border);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      .stat-info h3 {
+        font-size: 0.875rem;
+        color: var(--admin-text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+      .stat-info h2 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--admin-text-main);
+      }
+      .stat-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      .icon-blue {
+        background: #e0e7ff;
+        color: #4f46e5;
+      }
+      .icon-green {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .icon-purple {
+        background: #f3e8ff;
+        color: #9333ea;
+      }
+      .icon-orange {
+        background: #ffedd5;
+        color: #ea580c;
+      }
+
+      /* Layout Grid */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 992px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Table Styles */
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .admin-table th,
+      .admin-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--admin-border);
+      }
+      .admin-table th {
+        font-weight: 600;
+        color: var(--admin-text-light);
+        background: #f9fafb;
+      }
+      .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-active {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+    </style>
+  {% endblock %}
+
+  {% block content %}
+    <div
+      style="
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
+      <div>
+        <h1
+          style="font-size: 1.5rem; font-weight: 700; color: var(--admin-text-main)"
+        >
+          Overview
+        </h1>
+        <p style="color: var(--admin-text-light); font-size: 0.875rem">
+          Welcome back, {{ request.user.first_name }}! Here's what's happening today.
+        </p>
+      </div>
+      <button
+        style="
+          background: var(--admin-primary);
+          color: white;
+          border: none;
+          padding: 0.6rem 1.25rem;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        "
+      >
+        <i class="fa-solid fa-download"></i>
+        Generate Report
+      </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>Total Users</h3>
+          <h2>1,248</h2>
+        </div>
+        <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>Active Courses</h3>
+          <h2>42</h2>
+        </div>
+        <div class="stat-icon icon-purple">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>Total Revenue</h3>
+          <h2>₹8,45,000</h2>
+        </div>
+        <div class="stat-icon icon-green">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>New Signups</h3>
+          <h2>+84</h2>
+        </div>
+        <div class="stat-icon icon-orange">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Chart Section -->
+      <div class="card" style="margin-bottom: 0">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+          "
+        >
+          <h3 style="font-size: 1.1rem; font-weight: 600">Revenue Analytics</h3>
+          <select
+            style="
+              padding: 0.3rem 0.5rem;
+              border: 1px solid var(--admin-border);
+              border-radius: 0.25rem;
+              outline: none;
+            "
+          >
+            <option>This Week</option>
+            <option>This Month</option>
+            <option>This Year</option>
+          </select>
+        </div>
+        <div style="position: relative; height: 300px; width: 100%;">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Users Table -->
+      <div class="card" style="margin-bottom: 0">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+          "
+        >
+          <h3 style="font-size: 1.1rem; font-weight: 600">Recent Registrations</h3>
+          <a
+            href="{% url 'user_list' %}"
+            style="
+              font-size: 0.875rem;
+              color: var(--admin-primary);
+              font-weight: 600;
+              text-decoration: none;
+            "
+          >
+            View All &rarr;
+          </a>
+        </div>
+        <div style="overflow-x: auto">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-weight: 500; color: var(--admin-text-main)">
+                    Rahul Sharma
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                    rahul@gmail.com
+                  </div>
+                </td>
+                <td>Student</td>
+                <td><span class="badge badge-active">Verified</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight: 500; color: var(--admin-text-main)">
+                    Priya Singh
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                    priya@yahoo.com
+                  </div>
+                </td>
+                <td>Instructor</td>
+                <td><span class="badge badge-active">Verified</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight: 500; color: var(--admin-text-main)">
+                    Amit Kumar
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                    amit123@gmail.com
+                  </div>
+                </td>
+                <td>Student</td>
+                <td><span class="badge badge-active">Verified</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Grid: Courses & Approvals -->
+    <div class="content-grid" style="margin-top: 1.5rem">
+      <!-- Top Selling Courses -->
+      <div class="card" style="margin-bottom: 0">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem">
+          Top Selling Courses
+        </h3>
+        <ul style="list-style: none; padding: 0">
+          <li
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 1rem 0;
+              border-bottom: 1px solid var(--admin-border);
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 0.5rem;
+                  background: url(&quot;https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80&quot;)
+                    center/cover;
+                "
+              ></div>
+              <div>
+                <div style="font-weight: 600; color: var(--admin-text-main)">
+                  Complete Python Masterclass
+                </div>
+                <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                  By Priya Singh &bull; ₹3,499
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right">
+              <div style="font-weight: 700; color: #16a34a">420 Sales</div>
+              <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                This Month
+              </div>
+            </div>
+          </li>
+          <li
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 1rem 0;
+              border-bottom: 1px solid var(--admin-border);
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 0.5rem;
+                  background: url(&quot;https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80&quot;)
+                    center/cover;
+                "
+              ></div>
+              <div>
+                <div style="font-weight: 600; color: var(--admin-text-main)">
+                  Data Science for Beginners
+                </div>
+                <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                  By Vikram Tech &bull; ₹4,999
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right">
+              <div style="font-weight: 700; color: #16a34a">315 Sales</div>
+              <div style="font-size: 0.75rem; color: var(--admin-text-light)">
+                This Month
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pending Actions -->
+      <div class="card" style="margin-bottom: 0">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem">
+          Pending Approvals
+          <span class="badge" style="background: #ef4444; color: white">12</span>
+        </h3>
+
+        <div
+          style="
+            padding: 1rem;
+            border: 1px solid var(--admin-border);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f59e0b;
+          "
+        >
+          <div style="font-weight: 600; font-size: 0.9rem">
+            Course Review: Advanced React
+          </div>
+          <div
+            style="
+              font-size: 0.75rem;
+              color: var(--admin-text-light);
+              margin-bottom: 0.5rem;
+            "
+          >
+            Submitted by John Doe
+          </div>
+          <button
+            style="
+              font-size: 0.75rem;
+              padding: 0.3rem 0.8rem;
+              border-radius: 0.25rem;
+              border: none;
+              background: #e0e7ff;
+              color: #4f46e5;
+              font-weight: 600;
+              cursor: pointer;
+            "
+          >
+            Review Now
+          </button>
+        </div>
+
+        <div
+          style="
+            padding: 1rem;
+            border: 1px solid var(--admin-border);
+            border-radius: 0.5rem;
+            border-left: 4px solid #f59e0b;
+          "
+        >
+          <div style="font-weight: 600; font-size: 0.9rem">
+            Instructor KYC Verification
+          </div>
+          <div
+            style="
+              font-size: 0.75rem;
+              color: var(--admin-text-light);
+              margin-bottom: 0.5rem;
+            "
+          >
+            Anjali Verma submitted documents
+          </div>
+          <button
+            style="
+              font-size: 0.75rem;
+              padding: 0.3rem 0.8rem;
+              border-radius: 0.25rem;
+              border: none;
+              background: #e0e7ff;
+              color: #4f46e5;
+              font-weight: 600;
+              cursor: pointer;
+            "
+          >
+            Verify KYC
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endblock %}
+
+  {% block extra_js %}
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Initialize Revenue Chart
+      const ctx = document.getElementById("revenueChart").getContext("2d");
+
+      // Gradient Fill
+      let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, "rgba(79, 70, 229, 0.4)"); 
+      gradient.addColorStop(1, "rgba(79, 70, 229, 0.0)");
+
+      const revenueChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          datasets: [
+            {
+              label: "Revenue (₹)",
+              data: [12000, 19000, 15000, 28000, 22000, 35000, 42000],
+              borderColor: "#4f46e5",
+              backgroundColor: gradient,
+              borderWidth: 3,
+              pointBackgroundColor: "#ffffff",
+              pointBorderColor: "#4f46e5",
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              fill: true,
+              tension: 0.4, 
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1f2937',
+              padding: 12,
+              titleFont: { size: 13, family: "'Inter', sans-serif" },
+              bodyFont: { size: 13, family: "'Inter', sans-serif" },
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return '₹ ' + context.parsed.y.toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { borderDash: [4, 4], color: "#e5e7eb", drawBorder: false },
+              ticks: {
+                color: "#6b7280",
+                font: { family: "'Inter', sans-serif", size: 11 },
+                callback: function(value) { return '₹' + value / 1000 + 'k'; }
+              }
+            },
+            x: {
+              grid: { display: false, drawBorder: false },
+              ticks: {
+                color: "#6b7280",
+                font: { family: "'Inter', sans-serif", size: 11 }
+              }
+            },
+          },
+        },
+      });
+    </script>
+  {% endblock %}

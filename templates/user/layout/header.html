@@ -1,0 +1,543 @@
+<style>
+    /* Premium Light Theme Header */
+    .site-header {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .logo {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #1f2937;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+        color: #4f46e5;
+        font-size: 2rem;
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .nav-item {
+        position: relative;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        color: #4b5563;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .nav-link:hover {
+        background-color: #f3f4f6;
+        color: #4f46e5;
+    }
+
+    /* Premium Dropdown CSS */
+    .dropdown-menu {
+        position: absolute;
+        top: 130%;
+        left: 0;
+        background-color: #ffffff;
+        min-width: 220px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        padding: 0.75rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(15px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        list-style: none;
+        z-index: 100;
+        border: 1px solid #f3f4f6;
+    }
+    
+    .dropdown-menu::before {
+        content: ''; position: absolute; top: -20px; left: 0; width: 100%; height: 20px;
+    }
+
+    .nav-item:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        top: 110%;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #374151;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #e0e7ff;
+        color: #4f46e5;
+        padding-left: 1.25rem; 
+    }
+
+    .header-btn {
+        background-color: #4f46e5;
+        color: white !important;
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .header-btn:hover {
+        background-color: #4338ca;
+        box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* -------------------------------------------
+       Individual Modals CSS
+       ------------------------------------------- */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(5px);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 1.5rem;
+        width: 100%;
+        max-width: 450px;
+        transform: scale(0.95) translateY(20px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        position: relative;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1.5rem; right: 1.5rem;
+        background: #f3f4f6;
+        border: none;
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        cursor: pointer;
+        color: #6b7280;
+        transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center;
+        z-index: 10;
+    }
+    .modal-close:hover { color: #111827; background: #e5e7eb; }
+
+    .modal-header { margin-bottom: 1.5rem; text-align: left; }
+    .modal-header h2 { margin: 0; font-size: 1.75rem; color: #111827; font-weight: 800; margin-bottom: 0.25rem;}
+    .modal-header p { color: #6b7280; font-size: 0.9rem; margin: 0; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; font-size: 0.875rem;}
+    .form-group input, .form-group select {
+        width: 100%; padding: 0.875rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem; font-size: 1rem;
+        box-sizing: border-box; transition: all 0.2s;
+        background: #fff;
+    }
+    .form-group input:focus, .form-group select:focus {
+        outline: none; border-color: #4f46e5;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+    
+    .form-row { display: flex; gap: 1rem; }
+    .form-row .form-group { flex: 1; }
+
+    /* OTP Boxes */
+    .otp-container {
+        display: flex; justify-content: space-between; gap: 0.5rem; margin-bottom: 1.5rem;
+    }
+    .otp-input {
+        width: 45px; height: 55px;
+        border: 2px solid #e5e7eb; border-radius: 0.75rem;
+        font-size: 1.5rem; font-weight: 700; text-align: center; color: #111827;
+        transition: all 0.2s;
+        padding: 0 !important;
+    }
+
+    .auth-footer-text {
+        text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.875rem;
+    }
+    .auth-link { color: #4f46e5; font-weight: 800; text-decoration: none; cursor: pointer; }
+</style>
+
+<header class="site-header">
+    <div class="nav-container">
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="logo-icon">🎓</span> NextGen
+        </a>
+
+        <!-- Navigation -->
+        <ul class="nav-links">
+            <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link">Courses <span style="font-size: 0.8em; opacity: 0.6;">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="dropdown-item">💻 Web Development</a></li>
+                    <li><a href="#" class="dropdown-item">📊 Data Science</a></li>
+                    <li><a href="#" class="dropdown-item">🎨 UI/UX Design</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link">Instructors <span style="font-size: 0.8em; opacity: 0.6;">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="dropdown-item">⭐ Top Rated</a></li>
+                    <li><a href="#" class="dropdown-item">🚀 Become an Instructor</a></li>
+                </ul>
+            </li>
+            
+            <li class="nav-item">
+                <a href="javascript:void(0)" class="nav-link" onclick="openModal('loginModal')">Log In</a>
+            </li>
+            <li class="nav-item">
+                <button class="header-btn" onclick="openModal('signupModal')">Sign Up Free</button>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<!-- ========================================== -->
+<!-- 1. LOGIN MODAL                             -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+        <div class="modal-header">
+            <h2>Welcome Back</h2>
+            <p>Log in to access your courses.</p>
+        </div>
+        <form onsubmit="handleLoginSubmit(event)">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="loginPassword" placeholder="••••••••" style="padding-right: 2.5rem;" required>
+                    <span id="loginEye" onclick="togglePassword('loginPassword', 'loginEye')" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280; font-size: 1.2rem;">👁️</span>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.875rem;">
+                <label style="display: flex; gap: 0.5rem; align-items: center; font-weight: 500; cursor: pointer; color: #4b5563;">
+                    <input type="checkbox" style="width: 16px; height: 16px; accent-color: #4f46e5;"> Remember me
+                </label>
+                <a href="#" class="auth-link" style="font-weight: 600;">Forgot Password?</a>
+            </div>
+            <button type="submit" class="header-btn" style="width: 100%; padding: 0.875rem; font-size: 1rem;">Click here to send OTP</button>
+        </form>
+        <p class="auth-footer-text">
+            Don't have an account? <span class="auth-link" onclick="switchModal('loginModal', 'signupModal')">Sign Up</span>
+        </p>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. SIGN UP MODAL                           -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="signupModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+        <div class="modal-header">
+            <h2>Create Account</h2>
+            <p>Start your learning journey today.</p>
+        </div>
+        <form onsubmit="handleSignupSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" placeholder="Rahul" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" placeholder="Sharma" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="signupEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" value="+91" readonly style="width: 60px; background: #f3f4f6; text-align: center;">
+                    <input type="tel" placeholder="9876543210" pattern="[0-9]{10}" required style="flex: 1;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="signupPassword" placeholder="e.g. @Kaa#123" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}" title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. @, #, $)." style="padding-right: 2.5rem;" required>
+                    <span id="signupEye" onclick="togglePassword('signupPassword', 'signupEye')" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280; font-size: 1.2rem;">👁️</span>
+                </div>
+            </div>
+            <button type="submit" class="header-btn" style="width: 100%; padding: 0.875rem; font-size: 1rem;">Register Here</button>
+        </form>
+        <p class="auth-footer-text">
+            Already have an account? <span class="auth-link" onclick="switchModal('signupModal', 'loginModal')">Log In</span>
+        </p>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. OTP VERIFICATION MODAL                  -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="otpModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('otpModal')">✕</button>
+        <div class="modal-header" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📱</div>
+            <h2>Verify OTP</h2>
+            <p>We've sent a 6-digit code to your phone.</p>
+        </div>
+        <form onsubmit="handleOtpSubmit(event)">
+            <div class="otp-container" id="otpInputs">
+                <input type="text" maxlength="1" class="otp-input" required>
+                <input type="text" maxlength="1" class="otp-input" required>
+                <input type="text" maxlength="1" class="otp-input" required>
+                <input type="text" maxlength="1" class="otp-input" required>
+                <input type="text" maxlength="1" class="otp-input" required>
+                <input type="text" maxlength="1" class="otp-input" required>
+            </div>
+            <button type="submit" class="header-btn" style="width: 100%; padding: 0.875rem; font-size: 1rem;">Login Here</button>
+        </form>
+        <p class="auth-footer-text">
+            Didn't receive the code? <a href="#" class="auth-link">Resend OTP</a> (00:30)
+        </p>
+        <p class="auth-footer-text" style="margin-top: 0.5rem;">
+            <span class="auth-link" onclick="switchModal('otpModal', 'loginModal')" style="font-weight: 500;">← Back to Log In</span>
+        </p>
+    </div>
+</div>
+
+<script>
+    // General Modal Functions
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+        document.body.style.overflow = 'auto'; 
+    }
+
+    function switchModal(fromId, toId) {
+        closeModal(fromId);
+        setTimeout(() => {
+            openModal(toId);
+        }, 300); // small delay for smooth transition between modals
+    }
+
+    // Auto-focus OTP
+    const otpInputs = document.querySelectorAll('.otp-input');
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('keyup', (e) => {
+            if(e.key >= 0 && e.key <= 9) {
+                if(index < otpInputs.length - 1) otpInputs[index + 1].focus();
+            } else if (e.key === 'Backspace') {
+                if(index > 0) otpInputs[index - 1].focus();
+            }
+        });
+    });
+
+    // Form Submissions
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerText = '🙈';
+        } else {
+            input.type = 'password';
+            icon.innerText = '👁️';
+        }
+    }
+
+    // Get CSRF Token helper if you need to use cookies in the future, but we are using @csrf_exempt for simplicity here
+
+    async function handleLoginSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = 'Sending...';
+        
+        try {
+            const response = await fetch('/accounts/api/send-otp/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                switchModal('loginModal', 'otpModal');
+                setTimeout(() => { otpInputs[0].focus(); }, 400);
+            } else {
+                alert(result.message);
+            }
+        } catch (err) {
+            alert('Something went wrong. Please try again.');
+        } finally {
+            btn.innerText = 'Click here to send OTP';
+        }
+    }
+
+    async function handleSignupSubmit(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const btn = form.querySelector('button[type="submit"]');
+        
+        const firstName = form.querySelectorAll('input[type="text"]')[0].value;
+        const lastName = form.querySelectorAll('input[type="text"]')[1].value;
+        const email = document.getElementById('signupEmail').value;
+        const phone = form.querySelector('input[type="tel"]').value;
+        const password = document.getElementById('signupPassword').value;
+
+        btn.innerText = 'Registering...';
+
+        try {
+            const response = await fetch('/accounts/api/signup/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    phone: phone,
+                    password: password
+                })
+            });
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                // Auto pre-fill the Login email field
+                if(email) {
+                    document.getElementById('loginEmail').value = email;
+                }
+                switchModal('signupModal', 'loginModal');
+                setTimeout(() => alert('Registration Successful! Please Log In.'), 300);
+            } else {
+                alert(result.message);
+            }
+        } catch (err) {
+            alert('Registration failed. Try again.');
+        } finally {
+            btn.innerText = 'Register Here';
+        }
+    }
+
+    async function handleOtpSubmit(e) {
+        e.preventDefault();
+        const otpValue = Array.from(otpInputs).map(i => i.value).join('');
+        const email = document.getElementById('loginEmail').value; // We stored email here earlier
+        const btn = e.target.querySelector('button[type="submit"]');
+        
+        if (otpValue.length < 6) {
+            alert('Please enter all 6 digits of the OTP.');
+            return;
+        }
+
+        btn.innerText = 'Verifying...';
+
+        try {
+            const response = await fetch('/accounts/api/verify-login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, otp: otpValue })
+            });
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                closeModal('otpModal');
+                window.location.href = '/dashboard/'; 
+            } else {
+                alert(result.message);
+            }
+        } catch (err) {
+            alert('Verification failed. Try again.');
+        } finally {
+            btn.innerText = 'Login Here';
+        }
+    }
+
+    // Close when clicking outside
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+</script>
