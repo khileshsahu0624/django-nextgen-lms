@@ -1,0 +1,204 @@
+{% extends 'admin/layout/base.html' %}
+{% block title %}Instructor Dashboard | Production LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        background: var(--admin-surface);
+        border-radius: 1rem;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--admin-border);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .stat-info h3 {
+        font-size: 11px;
+        color: var(--admin-text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    .stat-info h2 {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--admin-text-main);
+    }
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+    .icon-blue { background: #e0e7ff; color: #4f46e5; }
+    .icon-green { background: #dcfce7; color: #16a34a; }
+    .icon-purple { background: #f3e8ff; color: #9333ea; }
+    .icon-orange { background: #ffedd5; color: #ea580c; }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+        margin-bottom: 2rem;
+    }
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 12px;
+    }
+    @media (max-width: 992px) {
+        .content-grid { grid-template-columns: 1fr; }
+    }
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .admin-table th, .admin-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--admin-border);
+    }
+    .admin-table th {
+        font-weight: 600;
+        color: var(--admin-text-light);
+        background: #f9fafb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 style="font-size: 12px; font-weight: 700; color: var(--admin-text-main)">Instructor Dashboard</h1>
+        <p style="color: var(--admin-text-light); font-size: 11px">Welcome, {{ request.user.first_name }}! Here's your teaching overview.</p>
+    </div>
+    <a href="{% url 'course_create' %}" style="background: var(--admin-primary); color: white; text-decoration: none; padding: 0.6rem 12px; border-radius: 0.5rem; font-weight: 600; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);">
+        <i class="fa-solid fa-plus"></i> Create New Course
+    </a>
+</div>
+
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>My Courses</h3>
+            <h2>12</h2>
+        </div>
+        <div class="stat-icon icon-blue"><i class="fa-solid fa-chalkboard-teacher"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>Total Students</h3>
+            <h2>845</h2>
+        </div>
+        <div class="stat-icon icon-purple"><i class="fa-solid fa-users"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>Total Earnings</h3>
+            <h2>₹1,24,000</h2>
+        </div>
+        <div class="stat-icon icon-green"><i class="fa-solid fa-wallet"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>Avg Rating</h3>
+            <h2>4.8 <i class="fa-solid fa-star" style="font-size:14px;"></i></h2>
+        </div>
+        <div class="stat-icon icon-orange"><i class="fa-solid fa-star"></i></div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <!-- Earnings Analytics -->
+    <div class="card" style="margin-bottom: 0">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <h3 style="font-size: 12px; font-weight: 600">Earnings Overview</h3>
+        </div>
+        <div style="position: relative; height: 300px; width: 100%;">
+            <canvas id="earningsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Enrollments -->
+    <div class="card" style="margin-bottom: 0">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <h3 style="font-size: 12px; font-weight: 600">Recent Enrollments</h3>
+        </div>
+        <div style="overflow-x: auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Course</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500; color: var(--admin-text-main)">Arjun Patel</div>
+                            <div style="font-size: 11px; color: var(--admin-text-light)">arjun@gmail.com</div>
+                        </td>
+                        <td style="font-size: 11px;">Full Stack Bootcamp</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500; color: var(--admin-text-main)">Sneha R</div>
+                            <div style="font-size: 11px; color: var(--admin-text-light)">sneha@yahoo.com</div>
+                        </td>
+                        <td style="font-size: 11px;">Data Science Pro</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500; color: var(--admin-text-main)">Rahul Verma</div>
+                            <div style="font-size: 11px; color: var(--admin-text-light)">rahul.v@gmail.com</div>
+                        </td>
+                        <td style="font-size: 11px;">Python Basics</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById("earningsChart").getContext("2d");
+    let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "rgba(22, 163, 74, 0.4)"); 
+    gradient.addColorStop(1, "rgba(22, 163, 74, 0.0)");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [{
+                label: "Earnings (₹)",
+                data: [15000, 22000, 18000, 32000, 28000, 40000, 35000],
+                borderColor: "#16a34a",
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4, 
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'user/layout/base.html' %}
+
+{% block title %}Update Profile - NextGen LMS{% endblock %}
+
+{% block content %}
+<style>
+  body { background-color: #f9fafb; }
+  .profile-container {
+    min-height: calc(100vh - 80px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .profile-card {
+    background: white;
+    width: 100%; max-width: 600px;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+  }
+  .profile-header { text-align: center; margin-bottom: 2rem; }
+  .profile-header h1 { font-size: 2rem; font-weight: 800; color: #111827; margin-bottom: 0.5rem; }
+  .profile-header p { color: #6b7280; font-size: 1rem; }
+  
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; font-size: 0.875rem;}
+  .form-group input {
+    width: 100%; padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem; font-size: 1rem;
+    box-sizing: border-box; transition: all 0.2s;
+  }
+  .form-group input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+  .form-group input[disabled] { background-color: #f3f4f6; cursor: not-allowed; }
+  
+  .btn-save {
+    width: 100%; padding: 1rem; background: #4f46e5; color: white;
+    border: none; border-radius: 0.75rem; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.3s; margin-top: 1rem; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+  }
+  .btn-save:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
+
+  .profile-photo-preview {
+    width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+    margin: 0 auto 1.5rem auto; display: block;
+    border: 3px solid #e5e7eb;
+  }
+  
+  .alert-success {
+    background-color: #d1fae5; border-color: #34d399; color: #065f46;
+    padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center;
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h1>Update Profile</h1>
+      <p>Manage your account settings.</p>
+    </div>
+    
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    
+    {% if user.profile_photo %}
+      <img src="{{ user.profile_photo.url }}" alt="Profile Photo" class="profile-photo-preview">
+    {% else %}
+      <div class="profile-photo-preview" style="background-color: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 2rem;">👤</div>
+    {% endif %}
+    
+    <form action="" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label>First Name</label>
+        {{ form.first_name }}
+      </div>
+      
+      <div class="form-group">
+        <label>Last Name</label>
+        {{ form.last_name }}
+      </div>
+      
+      <div class="form-group">
+        <label>Profile Photo</label>
+        {{ form.profile_photo }}
+      </div>
+      
+      <!-- Read-only fields -->
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" value="{{ user.email }}" disabled title="You cannot change your email address.">
+      </div>
+      
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="text" value="{{ user.phone_number }}" disabled title="You cannot change your mobile number.">
+      </div>
+      
+      <button type="submit" class="btn-save">Save Changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

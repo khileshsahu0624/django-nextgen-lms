@@ -1,0 +1,289 @@
+{% extends 'admin/layout/base.html' %}
+
+{% block title %}{% if object %}Edit Course{% else %}Create Course{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid {% if object %}fa-pen-to-square{% else %}fa-plus{% endif %}" style="color: var(--admin-primary);"></i> 
+        {% if object %}Edit Course: {{ object.course_title }}{% else %}Create New Course{% endif %}
+    </h1>
+    <a href="{% url 'course_list' %}" class="btn" style="border: 1px solid #e5e7eb; background: #fff; color: #374151; padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <i class="fa-solid fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<!-- Add multipart encoding for file uploads -->
+<form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="card" style="width: 100%; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; padding: 0;">
+        
+        <!-- SECTION 1: Basic Information -->
+        <div style="padding: 2rem;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-book-open" style="color: var(--admin-primary); font-size: 14px;"></i> Basic Information</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label class="form-label">Course Title <span style="color: #ef4444;">*</span></label>
+                    {{ form.course_title }}
+                    {% if form.course_title.errors %}<div class="form-error">{{ form.course_title.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Course Slug</label>
+                    {{ form.course_slug }}
+                    {% if form.course_slug.errors %}<div class="form-error">{{ form.course_slug.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Course Code</label>
+                    {{ form.course_code }}
+                    {% if form.course_code.errors %}<div class="form-error">{{ form.course_code.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Category</label>
+                    {{ form.course_category }}
+                    {% if form.course_category.errors %}<div class="form-error">{{ form.course_category.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Tags</label>
+                    {{ form.course_tags }}
+                    {% if form.course_tags.errors %}<div class="form-error">{{ form.course_tags.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Instructor</label>
+                    {{ form.course_instructor }}
+                    {% if form.course_instructor.errors %}<div class="form-error">{{ form.course_instructor.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Media & Description -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-photo-film" style="color: var(--admin-primary); font-size: 14px;"></i> Media & Description</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label class="form-label">Course Thumbnail</label>
+                    {{ form.course_thumbnail }}
+                    {% if form.course_thumbnail.errors %}<div class="form-error">{{ form.course_thumbnail.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Intro Video</label>
+                    {{ form.course_intro_video }}
+                    {% if form.course_intro_video.errors %}<div class="form-error">{{ form.course_intro_video.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="form-label">Short Description</label>
+                {{ form.course_short_description }}
+                {% if form.course_short_description.errors %}<div class="form-error">{{ form.course_short_description.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div>
+                <label class="form-label">Full Description</label>
+                {{ form.course_description }}
+                {% if form.course_description.errors %}<div class="form-error">{{ form.course_description.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+
+        <!-- SECTION 3: Course Settings -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-sliders" style="color: var(--admin-primary); font-size: 14px;"></i> Course Settings</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label class="form-label">Difficulty Level</label>
+                    {{ form.course_level }}
+                    {% if form.course_level.errors %}<div class="form-error">{{ form.course_level.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Language</label>
+                    {{ form.course_language }}
+                    {% if form.course_language.errors %}<div class="form-error">{{ form.course_language.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Total Duration (Minutes)</label>
+                    {{ form.course_duration_minutes }}
+                    {% if form.course_duration_minutes.errors %}<div class="form-error">{{ form.course_duration_minutes.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Access Duration (Days)</label>
+                    {{ form.course_access_duration_days }}
+                    {% if form.course_access_duration_days.errors %}<div class="form-error">{{ form.course_access_duration_days.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Pricing -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-tag" style="color: var(--admin-primary); font-size: 14px;"></i> Pricing</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    {{ form.course_is_free }}
+                    <label class="form-label" style="margin-bottom:0;">Is this course Free?</label>
+                    {% if form.course_is_free.errors %}<div class="form-error">{{ form.course_is_free.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Regular Price</label>
+                    {{ form.course_price }}
+                    {% if form.course_price.errors %}<div class="form-error">{{ form.course_price.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Discount Price</label>
+                    {{ form.course_discount_price }}
+                    {% if form.course_discount_price.errors %}<div class="form-error">{{ form.course_discount_price.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Currency</label>
+                    {{ form.course_currency }}
+                    {% if form.course_currency.errors %}<div class="form-error">{{ form.course_currency.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Status & Visibility -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-eye" style="color: var(--admin-primary); font-size: 14px;"></i> Status & Visibility</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label class="form-label">Course Status</label>
+                    {{ form.course_status }}
+                    {% if form.course_status.errors %}<div class="form-error">{{ form.course_status.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Visibility</label>
+                    {{ form.course_visibility }}
+                    {% if form.course_visibility.errors %}<div class="form-error">{{ form.course_visibility.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Enrollment Start Date</label>
+                    <input type="datetime-local" name="course_enrollment_start_date" value="{{ form.course_enrollment_start_date.value|default_if_none:'' }}" style="width: 100%; padding: 0.5rem 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none;">
+                    {% if form.course_enrollment_start_date.errors %}<div class="form-error">{{ form.course_enrollment_start_date.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Enrollment End Date</label>
+                    <input type="datetime-local" name="course_enrollment_end_date" value="{{ form.course_enrollment_end_date.value|default_if_none:'' }}" style="width: 100%; padding: 0.5rem 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none;">
+                    {% if form.course_enrollment_end_date.errors %}<div class="form-error">{{ form.course_enrollment_end_date.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: Content Metadata -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-list-check" style="color: var(--admin-primary); font-size: 14px;"></i> Content Metadata</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+                <div>
+                    <label class="form-label">Learning Outcomes (What will students learn?)</label>
+                    {{ form.course_learning_outcomes }}
+                    {% if form.course_learning_outcomes.errors %}<div class="form-error">{{ form.course_learning_outcomes.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Requirements / Prerequisites</label>
+                    {{ form.course_requirements }}
+                    {% if form.course_requirements.errors %}<div class="form-error">{{ form.course_requirements.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Target Audience</label>
+                    {{ form.course_target_audience }}
+                    {% if form.course_target_audience.errors %}<div class="form-error">{{ form.course_target_audience.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: SEO -->
+        <div style="padding: 2rem; border-top: 1px solid #f1f5f9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-brands fa-searchengin" style="color: var(--admin-primary); font-size: 14px;"></i> SEO Settings</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+                <div>
+                    <label class="form-label">Meta Title</label>
+                    {{ form.course_meta_title }}
+                    {% if form.course_meta_title.errors %}<div class="form-error">{{ form.course_meta_title.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">Meta Description</label>
+                    {{ form.course_meta_description }}
+                    {% if form.course_meta_description.errors %}<div class="form-error">{{ form.course_meta_description.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Sticky Footer -->
+        <div style="background: #fff; padding: 1.25rem 2rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 0; z-index: 10; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+            <a href="{% url 'course_list' %}" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 6px; background: #f1f5f9; color: #475569; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</a>
+            <button type="submit" class="btn" style="padding: 0.5rem 2rem; border-radius: 6px; background: var(--admin-primary); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-size: 12px; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px -1px rgba(79,70,229,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fa-solid fa-check"></i> {% if object %}Save Changes{% else %}Create Course{% endif %}
+            </button>
+        </div>
+
+    </div>
+</form>
+
+<style>
+    /* Styling for Django generated inputs inside this form */
+    .form-label {
+        display: block; 
+        margin-bottom: 0.4rem; 
+        font-weight: 600; 
+        color: #334155; 
+        font-size: 12px;
+    }
+    .form-error {
+        color: #ef4444; 
+        font-size: 10px; 
+        margin-top: 0.3rem; 
+        font-weight: 600;
+    }
+    
+    input[type="text"], input[type="number"], input[type="file"], select, textarea {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+    }
+    input[type="text"], input[type="number"], select {
+        height: 36px;
+    }
+    input[type="file"] {
+        padding: 0.4rem 0.75rem;
+        background: #fff;
+    }
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+        background: #fff;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Errors Dynamic highlight */
+    .errorlist { display: none; } /* Hide default django error ul */
+</style>
+
+<script>
+    // Simple script to highlight errored fields
+    document.addEventListener("DOMContentLoaded", function() {
+        const errorDivs = document.querySelectorAll('.form-error');
+        errorDivs.forEach(div => {
+            let input = div.previousElementSibling;
+            if (input && input.tagName !== 'LABEL') {
+                input.style.borderColor = '#ef4444';
+                input.style.backgroundColor = '#fef2f2';
+            }
+        });
+    });
+</script>
+{% endblock %}

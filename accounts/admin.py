@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Role, ModuleCategory, Module, RolePermission
+
+admin.site.register(Role)
+admin.site.register(ModuleCategory)
+admin.site.register(Module)
+admin.site.register(RolePermission)
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser

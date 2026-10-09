@@ -1,0 +1,201 @@
+{% extends 'admin/layout/base.html' %}
+
+{% block title %}{% if object %}Edit Role{% else %}Create Role{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid {% if object %}fa-pen-to-square{% else %}fa-plus{% endif %}" style="color: var(--admin-primary);"></i> 
+        {% if object %}Edit Role: {{ object.name }}{% else %}Create New Role{% endif %}
+    </h1>
+    <a href="{% url 'role_list' %}" class="btn" style="border: 1px solid #e5e7eb; background: #fff; color: #374151; padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <i class="fa-solid fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<form id="role-form" method="POST" action="">
+    {% csrf_token %}
+    
+    <div class="card" style="width: 100%; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <!-- SECTION 1: Role Name -->
+        <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-id-badge" style="color: var(--admin-primary); font-size: 14px;"></i> Role Configuration</h3>
+            <div style="max-width: 400px;">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #334155; font-size: 12px;">Role Name <span style="color: #ef4444;">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div style="color: #ef4444; font-size: 10px; margin-top: 0.3rem; font-weight: 600;">{{ form.name.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- SECTION 2: Permissions Configuration -->
+        <div style="padding: 2rem; background: #fafaf9;">
+            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-key" style="color: var(--admin-primary); font-size: 14px;"></i> Permissions</h3>
+            
+            <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; background: white;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                        <tr>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Module</th>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">All</th>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Create</th>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Read</th>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Update</th>
+                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                            <tr class="category-header" data-target="cat-{{ category.id }}" style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                                <td colspan="6" style="padding: 0.75rem 1rem; font-weight: 700; font-size: 12px; color: #334155;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>{{ category.name }}</span>
+                                        <i class="fa-solid fa-chevron-up toggle-icon" style="transition: transform 0.3s; color: #94a3b8;"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% for module in category.modules.all %}
+                            <tr class="cat-{{ category.id }}-row" style="border-bottom: 1px solid #f1f5f9; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 0.75rem 1rem; color: #0f172a; font-weight: 500;">{{ module.name }}</td>
+                                
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <input type="checkbox" class="all-check" data-module-id="{{ module.id }}" {% if module.perm.can_do_all %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                </td>
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="create_{{ module.id }}" {% if module.perm.can_create %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                </td>
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="read_{{ module.id }}" {% if module.perm.can_read %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                </td>
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="update_{{ module.id }}" {% if module.perm.can_update %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                </td>
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="delete_{{ module.id }}" {% if module.perm.can_delete %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" style="padding: 2rem; text-align: center; color: #94a3b8; font-size: 12px;">
+                                    No modules found. Please create modules in the admin panel first.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Premium Sticky Footer -->
+        <div style="background: #fff; padding: 1.25rem 2rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 0; z-index: 10; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+            <a href="{% url 'role_list' %}" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 6px; background: #f1f5f9; color: #475569; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</a>
+            <button type="submit" class="btn" style="padding: 0.5rem 2rem; border-radius: 6px; background: var(--admin-primary); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-size: 12px; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px -1px rgba(79,70,229,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fa-solid fa-check"></i> {% if object %}Save Changes{% else %}Create Role{% endif %}
+            </button>
+        </div>
+
+    </div>
+</form>
+
+<style>
+    /* Styling for Django generated inputs inside this form */
+    input[type="text"] {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #f8fafc;
+        border: 1px solid {% if form.name.errors %}#ef4444{% else %}#cbd5e1{% endif %};
+        border-radius: 6px;
+        font-size: 12px;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        height: 36px;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+    }
+    input[type="text"]:focus {
+        background: #fff;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    {% if form.name.errors %}
+    input[type="text"] {
+        background: #fef2f2;
+    }
+    {% endif %}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle "All" checkbox click
+        document.querySelectorAll('.all-check').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const moduleId = this.getAttribute('data-module-id');
+                const isChecked = this.checked;
+                
+                document.querySelectorAll(`.perm-check-${moduleId}`).forEach(permCheck => {
+                    permCheck.checked = isChecked;
+                });
+            });
+        });
+
+        // Handle individual permission click to update "All" checkbox
+        document.querySelectorAll('.perm-check').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const moduleId = this.className.match(/perm-check-(\d+)/)[1];
+                const allCheckboxes = document.querySelectorAll(`.perm-check-${moduleId}`);
+                const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                
+                document.querySelector(`.all-check[data-module-id="${moduleId}"]`).checked = allChecked;
+            });
+        });
+
+        // Accordion functionality for Categories
+        document.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const targetClass = this.getAttribute('data-target');
+                const rows = document.querySelectorAll(`.${targetClass}-row`);
+                const icon = this.querySelector('.toggle-icon');
+                
+                let isHidden = false;
+                rows.forEach(row => {
+                    if (row.style.display === 'none') {
+                        row.style.display = 'table-row';
+                        isHidden = false;
+                    } else {
+                        row.style.display = 'none';
+                        isHidden = true;
+                    }
+                });
+                
+                if (isHidden) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // Form Validation: Ensure at least one permission is checked before saving
+        const roleForm = document.getElementById('role-form');
+        if (roleForm) {
+            roleForm.addEventListener('submit', function(e) {
+                const allCheckboxes = document.querySelectorAll('.perm-check');
+                const isChecked = Array.from(allCheckboxes).some(cb => cb.checked);
+                
+                if (!isChecked) {
+                    e.preventDefault(); // Stop form submission
+                    if (typeof showNotification === 'function') {
+                        showNotification('Please select at least one permission before saving.', 'error');
+                    } else {
+                        alert('Please select at least one permission before saving.');
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

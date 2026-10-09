@@ -1,0 +1,144 @@
+{% extends 'admin/layout/base.html' %}
+
+{% block title %}Roles & Permissions{% endblock %}
+
+{% block content %}
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-user-shield" style="color: var(--admin-primary);"></i> Roles & Permissions
+    </h1>
+    <a href="{% url 'role_create' %}" class="btn" style="border: 1px solid var(--admin-primary); background: transparent; color: var(--admin-primary); padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s;" onmouseover="this.style.background='var(--admin-primary)'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='var(--admin-primary)'">
+        <i class="fa-solid fa-plus"></i> Add new role
+    </a>
+</div>
+
+<div class="card" style="padding: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+    <h2 style="font-size: 12px; text-transform: uppercase; margin: 0 0 1.5rem 0; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+        <i class="fa-solid fa-list-ul" style="color: var(--admin-primary); margin-right: 0.25rem;"></i> ROLE LIST
+    </h2>
+    <div style="overflow-x: auto;">
+        <table class="datatable" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <tr>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">S.NO.</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Role Name</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Permissions</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for role in roles %}
+                <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem; font-size: 12px; color: #64748b;"></td>
+                    <td style="padding: 1rem; font-size: 12px; color: #0f172a; font-weight: 600;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            {{ role.name|title }}
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="background: #d1fae5; color: #065f46; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #a7f3d0;">
+                            {{ role.permissions.count }} Permissions
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+                            <a href="{% url 'role_update' role.pk %}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; border-radius: 4px; text-decoration: none; transition: all 0.2s; border: 1px solid #e2e8f0;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569'">
+                                <i class="fa-solid fa-pen" style="font-size: 11px;"></i>
+                            </a>
+                            <a href="{% url 'role_delete' role.pk %}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #fef2f2; color: #ef4444; border-radius: 4px; text-decoration: none; transition: all 0.2s; border: 1px solid #fee2e2;" onmouseover="this.style.background='#fee2e2'; this.style.color='#991b1b'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
+                                <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* DataTables Premium Styling */
+    .dataTables_wrapper {
+        font-size: 12px !important;
+        color: #475569 !important;
+    }
+    
+    /* Top Controls: Length & Search */
+    .dataTables_length, .dataTables_filter {
+        margin-bottom: 1.5rem;
+    }
+    .dataTables_length label, .dataTables_filter label {
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dataTables_length select, .dataTables_filter input {
+        padding: 0.35rem 0.75rem;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.2s ease;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+    }
+    .dataTables_length select:focus, .dataTables_filter input:focus {
+        background: #fff;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Bottom Controls: Info & Pagination */
+    .dataTables_info {
+        padding-top: 1.5rem !important;
+        font-weight: 500;
+        color: #64748b !important;
+    }
+    
+    .dataTables_paginate {
+        padding-top: 1rem !important;
+        display: flex;
+        gap: 0.25rem;
+    }
+    .dataTables_paginate .paginate_button {
+        padding: 0.35rem 0.8rem !important;
+        border-radius: 6px !important;
+        border: 1px solid transparent !important;
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .dataTables_paginate .paginate_button:hover {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+    }
+    .dataTables_paginate .paginate_button.current {
+        background: var(--admin-primary) !important;
+        color: white !important;
+        border-color: transparent !important;
+        box-shadow: 0 2px 4px rgba(79,70,229,0.2) !important;
+    }
+    .dataTables_paginate .paginate_button.disabled {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+        background: transparent !important;
+        border: transparent !important;
+    }
+    
+    /* Row hover effect enhancement */
+    table.dataTable.no-footer {
+        border-bottom: 2px solid #e2e8f0;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,403 @@
+{% extends 'admin/layout/base.html' %}
+
+{% block title %}{% if object %}Edit User{% else %}Create User{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid {% if object %}fa-user-pen{% else %}fa-user-plus{% endif %}" style="color: var(--admin-primary);"></i> 
+        {% if object %}Edit Profile: {{ object.first_name }} {{ object.last_name }}{% else %}Add New User{% endif %}
+    </h1>
+    <a href="{% url 'user_list' %}" class="btn" style="border: 1px solid #e5e7eb; background: #fff; color: #374151; padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <i class="fa-solid fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- Display non-field errors if any -->
+    {% if form.non_field_errors %}
+    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 12px; font-weight: 600;">
+        {{ form.non_field_errors.0 }}
+    </div>
+    {% endif %}
+
+    <div class="card" style="width: 100%; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <!-- Premium Header Banner -->
+        <div style="padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to right, #f8fafc, #f1f5f9); border-bottom: 1px solid #e2e8f0;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="width: 56px; height: 56px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    {% if object.profile_photo %}
+                        <img src="{{ object.profile_photo.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-user" style="font-size: 24px; color: #94a3b8;"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 style="margin: 0 0 0.25rem 0; font-size: 15px; color: #0f172a; font-weight: 700;">{% if object %}{{ object.first_name }} {{ object.last_name }}{% else %}New User Registration{% endif %}</h2>
+                    <p style="margin: 0; font-size: 12px; color: #64748b;">Complete the profile details below</p>
+                </div>
+            </div>
+            
+            {% if object %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; background: #fff; padding: 0.4rem 1rem; border-radius: 2rem; border: 1px solid {% if form.is_active.errors %}#ef4444{% else %}#e2e8f0{% endif %}; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                {{ form.is_active }}
+                <span style="font-weight: 600; color: #334155; font-size: 12px;">Account Active</span>
+            </label>
+            {% endif %}
+        </div>
+
+        <!-- Main Form Body -->
+        <div style="padding: 0;">
+            
+            <!-- SECTION 1: Personal & Account -->
+            <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9;">
+                <h3 class="section-title"><i class="fa-solid fa-id-card"></i> Personal & Account Settings</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <label class="form-label">First Name <span class="required">*</span></label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div class="error-msg">{{ form.first_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Last Name <span class="required">*</span></label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div class="error-msg">{{ form.last_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Email Address <span class="required">*</span></label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="error-msg">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Phone Number</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}<div class="error-msg">{{ form.phone_number.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Gender</label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}<div class="error-msg">{{ form.gender.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="{{ form.dob.name }}" value="{{ form.dob.value|date:'Y-m-d'|default:'' }}" class="custom-input {% if form.dob.errors %}input-error{% endif %}">
+                        {% if form.dob.errors %}<div class="error-msg">{{ form.dob.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Assign Role <span class="required">*</span></label>
+                        {{ form.role }}
+                        {% if form.role.errors %}<div class="error-msg">{{ form.role.errors.0 }}</div>{% endif %}
+                    </div>
+                    {% if not object %}
+                    <div>
+                        <label class="form-label">Initial Password <span class="required">*</span></label>
+                        <input type="password" name="{{ form.password.name }}" class="custom-input {% if form.password.errors %}input-error{% endif %}">
+                        {% if form.password.errors %}<div class="error-msg">{{ form.password.errors.0 }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                    <div style="grid-column: 1 / -1;">
+                        <label class="form-label">Profile Photo</label>
+                        <div style="display: flex; align-items: center; padding: 0.4rem 0.5rem; background: #f8fafc; border: 1px dashed {% if form.profile_photo.errors %}#ef4444{% else %}#cbd5e1{% endif %}; border-radius: 6px; width: fit-content; min-width: 300px;">
+                            <input type="file" name="{{ form.profile_photo.name }}" style="font-size: 12px;" accept="image/*">
+                        </div>
+                        {% if form.profile_photo.errors %}<div class="error-msg">{{ form.profile_photo.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Enrollment & Payment -->
+            <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9; background: #fafaf9;">
+                <h3 class="section-title"><i class="fa-solid fa-book-open"></i> Enrollment & Payment Details</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <label class="form-label">Course</label>
+                        <input type="text" name="{{ form.course.name }}" value="{{ form.course.value|default:'' }}" class="custom-input {% if form.course.errors %}input-error{% endif %}">
+                        {% if form.course.errors %}<div class="error-msg">{{ form.course.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Batch</label>
+                        <input type="text" name="{{ form.batch.name }}" value="{{ form.batch.value|default:'' }}" class="custom-input {% if form.batch.errors %}input-error{% endif %}">
+                        {% if form.batch.errors %}<div class="error-msg">{{ form.batch.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Admission Date</label>
+                        <input type="date" name="{{ form.admission_date.name }}" value="{{ form.admission_date.value|date:'Y-m-d'|default:'' }}" class="custom-input {% if form.admission_date.errors %}input-error{% endif %}">
+                        {% if form.admission_date.errors %}<div class="error-msg">{{ form.admission_date.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Enrollment Status</label>
+                        {{ form.enrollment_status }}
+                        {% if form.enrollment_status.errors %}<div class="error-msg">{{ form.enrollment_status.errors.0 }}</div>{% endif %}
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1; height: 1px; background: #e5e7eb; margin: 0.5rem 0;"></div>
+                    
+                    <div>
+                        <label class="form-label">Payment Amount (₹)</label>
+                        <input type="number" step="0.01" name="{{ form.payment_amount.name }}" value="{{ form.payment_amount.value|default:'' }}" class="custom-input {% if form.payment_amount.errors %}input-error{% endif %}">
+                        {% if form.payment_amount.errors %}<div class="error-msg">{{ form.payment_amount.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Payment Date</label>
+                        <input type="date" name="{{ form.payment_date.name }}" value="{{ form.payment_date.value|date:'Y-m-d'|default:'' }}" class="custom-input {% if form.payment_date.errors %}input-error{% endif %}">
+                        {% if form.payment_date.errors %}<div class="error-msg">{{ form.payment_date.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Payment Status</label>
+                        {{ form.payment_status }}
+                        {% if form.payment_status.errors %}<div class="error-msg">{{ form.payment_status.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Academic & Address -->
+            <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9;">
+                <h3 class="section-title"><i class="fa-solid fa-graduation-cap"></i> Address & Academic Details</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    
+                    <div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <label class="form-label">Student Code</label>
+                            <div class="readonly-box">
+                                {% if object and object.student_code %}{{ object.student_code }}{% else %}Auto Generated on Save{% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Highest Qualification</label>
+                            {{ form.qualification }}
+                            {% if form.qualification.errors %}<div class="error-msg">{{ form.qualification.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <label class="form-label">Short Biography</label>
+                            <input type="text" name="{{ form.bio.name }}" value="{{ form.bio.value|default:'' }}" class="custom-input {% if form.bio.errors %}input-error{% endif %}" placeholder="Write a brief professional bio...">
+                            {% if form.bio.errors %}<div class="error-msg">{{ form.bio.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div style="grid-column: 1 / -1; height: 1px; background: #e5e7eb; margin: 0.5rem 0;"></div>
+
+                    <div style="grid-column: 1 / -1;">
+                        <label class="form-label">Street Address</label>
+                        <input type="text" name="{{ form.address.name }}" value="{{ form.address.value|default:'' }}" class="custom-input {% if form.address.errors %}input-error{% endif %}">
+                        {% if form.address.errors %}<div class="error-msg">{{ form.address.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">City</label>
+                        {{ form.city }}
+                        {% if form.city.errors %}<div class="error-msg">{{ form.city.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">State</label>
+                        {{ form.state }}
+                        {% if form.state.errors %}<div class="error-msg">{{ form.state.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Country</label>
+                        {{ form.country }}
+                        {% if form.country.errors %}<div class="error-msg">{{ form.country.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Pincode / Zip</label>
+                        {{ form.pincode }}
+                        {% if form.pincode.errors %}<div class="error-msg">{{ form.pincode.errors.0 }}</div>{% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Guardian Name</label>
+                        {{ form.guardian_name }}
+                        {% if form.guardian_name.errors %}<div class="error-msg">{{ form.guardian_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="form-label">Guardian Phone</label>
+                        {{ form.guardian_phone }}
+                        {% if form.guardian_phone.errors %}<div class="error-msg">{{ form.guardian_phone.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Social Links -->
+            <div style="padding: 2rem; background: #fafaf9;">
+                <h3 class="section-title"><i class="fa-solid fa-share-nodes"></i> Social Profiles</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <div class="input-group {% if form.linkedin_link.errors %}input-error-group{% endif %}">
+                            <span class="input-icon"><i class="fa-brands fa-linkedin-in" style="color: #0077b5;"></i></span>
+                            {{ form.linkedin_link }}
+                        </div>
+                        {% if form.linkedin_link.errors %}<div class="error-msg">{{ form.linkedin_link.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <div class="input-group {% if form.facebook_link.errors %}input-error-group{% endif %}">
+                            <span class="input-icon"><i class="fa-brands fa-facebook-f" style="color: #1877f2;"></i></span>
+                            {{ form.facebook_link }}
+                        </div>
+                        {% if form.facebook_link.errors %}<div class="error-msg">{{ form.facebook_link.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <div class="input-group {% if form.twitter_link.errors %}input-error-group{% endif %}">
+                            <span class="input-icon"><i class="fa-brands fa-twitter" style="color: #1da1f2;"></i></span>
+                            {{ form.twitter_link }}
+                        </div>
+                        {% if form.twitter_link.errors %}<div class="error-msg">{{ form.twitter_link.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Premium Sticky Footer -->
+        <div style="background: #fff; padding: 1.25rem 2rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 0; z-index: 10; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+            <a href="{% url 'user_list' %}" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 6px; background: #f1f5f9; color: #475569; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</a>
+            <button type="submit" class="btn" style="padding: 0.5rem 2rem; border-radius: 6px; background: var(--admin-primary); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-size: 12px; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px -1px rgba(79,70,229,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fa-solid fa-check"></i> {% if object %}Save Changes{% else %}Create Profile{% endif %}
+            </button>
+        </div>
+
+    </div>
+</form>
+
+<style>
+    /* Styling adjustments for a beautiful full-width layout */
+    
+    .section-title {
+        font-size: 12px; 
+        color: #475569; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+        margin: 0 0 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: var(--admin-primary);
+        font-size: 14px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+        color: #334155;
+        font-size: 12px;
+    }
+    
+    .required {
+        color: #ef4444;
+    }
+
+    .error-msg {
+        color: #ef4444;
+        font-size: 10px;
+        margin-top: 0.3rem;
+        font-weight: 600;
+    }
+    
+    /* Clean Inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="url"],
+    select,
+    textarea,
+    .custom-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        height: 36px;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+    }
+    
+    input:hover, select:hover, textarea:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        background: #fff;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    /* Target Django generated form fields that have errors */
+    ul.errorlist {
+        display: none; /* Hide default django error list if it renders inside input */
+    }
+
+    /* We apply red border if there is an error */
+    .input-error,
+    select:has(+ .error-msg),
+    input:has(+ .error-msg) {
+        border-color: #ef4444 !important;
+        background: #fef2f2 !important;
+    }
+    
+    .readonly-box {
+        padding: 0.5rem 0.75rem;
+        background: #f1f5f9;
+        border-radius: 6px;
+        font-weight: 600;
+        color: #64748b;
+        font-family: monospace;
+        border: 1px dashed #94a3b8;
+        font-size: 12px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-group {
+        display: flex;
+        align-items: center;
+        height: 36px;
+    }
+    .input-group .input-icon {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-right: none;
+        padding: 0 0.75rem;
+        border-radius: 6px 0 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 12px;
+        color: #475569;
+    }
+    .input-group input {
+        border-radius: 0 6px 6px 0;
+        height: 100%;
+    }
+
+    .input-error-group .input-icon {
+        border-color: #ef4444 !important;
+        background: #fef2f2 !important;
+    }
+    .input-error-group input {
+        border-color: #ef4444 !important;
+        background: #fef2f2 !important;
+    }
+    
+    input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+        accent-color: var(--admin-primary);
+        margin: 0;
+    }
+</style>
+{% endblock %}
