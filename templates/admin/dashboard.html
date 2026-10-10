@@ -414,6 +414,7 @@
             padding: 1rem;
             border: 1px solid var(--admin-border);
             border-radius: 0.5rem;
+            margin-bottom: 1rem;
             border-left: 4px solid #f59e0b;
           "
         >
@@ -443,6 +444,62 @@
           >
             Verify KYC
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Grid -->
+    <div class="content-grid" style="margin-top: 1.5rem">
+      <!-- Quick Settings Links -->
+      <div class="card" style="margin-bottom: 0">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem">
+          Quick Settings & Menus
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <a
+            href="{% url 'module_category_list' %}"
+            style="
+              display: flex; align-items: center; justify-content: space-between;
+              padding: 1rem; border: 1px solid var(--admin-border); border-radius: 0.5rem;
+              text-decoration: none; color: var(--admin-text-main); transition: all 0.2s;
+            "
+            onmouseover="this.style.borderColor='var(--admin-primary)'; this.style.backgroundColor='#f8fafc';"
+            onmouseout="this.style.borderColor='var(--admin-border)'; this.style.backgroundColor='transparent';"
+          >
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 40px; height: 40px; border-radius: 0.5rem; background: #eef2ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                <i class="fa-solid fa-layer-group"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600;">Module Categories</div>
+                <div style="font-size: 0.75rem; color: var(--admin-text-light);">Manage dynamic sidebar categories</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--admin-text-light);"></i>
+          </a>
+
+          <a
+            href="{% url 'module_list' %}"
+            style="
+              display: flex; align-items: center; justify-content: space-between;
+              padding: 1rem; border: 1px solid var(--admin-border); border-radius: 0.5rem;
+              text-decoration: none; color: var(--admin-text-main); transition: all 0.2s;
+            "
+            onmouseover="this.style.borderColor='var(--admin-primary)'; this.style.backgroundColor='#f8fafc';"
+            onmouseout="this.style.borderColor='var(--admin-border)'; this.style.backgroundColor='transparent';"
+          >
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 40px; height: 40px; border-radius: 0.5rem; background: #f3e8ff; color: #9333ea; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                <i class="fa-solid fa-cubes"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600;">Modules Setup</div>
+                <div style="font-size: 0.75rem; color: var(--admin-text-light);">Configure module items and their sequence</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--admin-text-light);"></i>
+          </a>
         </div>
       </div>
     </div>

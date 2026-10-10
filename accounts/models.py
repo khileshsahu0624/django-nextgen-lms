@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, unique=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
+    initial_password = models.CharField(max_length=255, null=True, blank=True, help_text="Stores the initial raw password for super admin to view")
     
     # --- LMS Specific Profile Fields ---
     GENDER_CHOICES = (
@@ -105,9 +106,13 @@ class Module(models.Model):
     """
     category = models.ForeignKey(ModuleCategory, on_delete=models.CASCADE, related_name='modules')
     name = models.CharField(max_length=100)
+    icon = models.CharField(max_length=50, default='fa-solid fa-circle', help_text="FontAwesome icon class")
+    url_name = models.CharField(max_length=100, null=True, blank=True, help_text="Django URL name (e.g., 'user_list')")
+    order = models.PositiveIntegerField(default=0, help_text="Order in which it appears within the category")
     
     class Meta:
         unique_together = ('category', 'name')
+        ordering = ['order']
 
     def __str__(self):
         return f"{self.category.name} -> {self.name}"

@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from .forms import InstructorCreationForm, InstructorChangeForm, StudentCreationForm, StudentChangeForm, UserCreationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group, Permission
 from .models import CustomUser, Role
 
@@ -13,30 +15,38 @@ import json
 import random
 from django.db.models import Prefetch
 from .models import CustomUser, Role, ModuleCategory, Module, RolePermission
+# Admin Required Mixin
+class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = '/'
+    
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if self.request.user.is_superuser:
+            return True
+        if hasattr(self.request.user, 'role') and self.request.user.role:
+            role_name = self.request.user.role.name.lower()
+            return 'admin' in role_name or 'manager' in role_name or 'head' in role_name
+        return False
+
 # USER CRUD VIEWS
 # ==========================================
-class UserListView(ListView):
+class UserListView(AdminRequiredMixin, ListView):
     model = CustomUser
     template_name = 'admin/users/user_list.html'
     context_object_name = 'users'
     queryset = CustomUser.objects.order_by('-id')
 
-class UserCreateView(SuccessMessageMixin, CreateView):
+class UserCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = CustomUser
     template_name = 'admin/users/user_form.html'
-    fields = [
-        'first_name', 'last_name', 'email', 'phone_number', 'role', 'password',
-        'profile_photo', 'gender', 'dob', 'address', 'city', 'state', 'country', 'pincode',
-        'guardian_name', 'guardian_phone',
-        'course', 'batch', 'admission_date', 'enrollment_status',
-        'payment_amount', 'payment_date', 'payment_status',
-        'bio', 'qualification', 'linkedin_link', 'facebook_link', 'twitter_link'
-    ]
+    form_class = UserCreationForm
     success_url = reverse_lazy('user_list')
     success_message = "User created successfully!"
 
     def form_valid(self, form):
         user = form.save(commit=False)
+        user.initial_password = form.cleaned_data['password']
         user.set_password(form.cleaned_data['password'])
         user.save()
         # Auto-generate student_code after saving to use the auto-incremented ID
@@ -49,17 +59,10 @@ class UserCreateView(SuccessMessageMixin, CreateView):
         from django.http import HttpResponseRedirect
         return HttpResponseRedirect(self.get_success_url())
 
-class UserUpdateView(SuccessMessageMixin, UpdateView):
+class UserUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     model = CustomUser
     template_name = 'admin/users/user_form.html'
-    fields = [
-        'first_name', 'last_name', 'email', 'phone_number', 'role', 'is_active',
-        'profile_photo', 'gender', 'dob', 'address', 'city', 'state', 'country', 'pincode',
-        'guardian_name', 'guardian_phone',
-        'course', 'batch', 'admission_date', 'enrollment_status',
-        'payment_amount', 'payment_date', 'payment_status',
-        'bio', 'qualification', 'linkedin_link', 'facebook_link', 'twitter_link'
-    ]
+    form_class = UserChangeForm
     success_url = reverse_lazy('user_list')
     success_message = "User updated successfully!"
 
@@ -74,7 +77,7 @@ class UserUpdateView(SuccessMessageMixin, UpdateView):
         from django.http import HttpResponseRedirect
         return HttpResponseRedirect(self.get_success_url())
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(AdminRequiredMixin, DeleteView):
     model = CustomUser
     template_name = 'admin/users/user_confirm_delete.html'
     success_url = reverse_lazy('user_list')
@@ -87,13 +90,13 @@ class UserDeleteView(DeleteView):
 # ==========================================
 # ROLE CRUD VIEWS
 # ==========================================
-class RoleListView(ListView):
+class RoleListView(AdminRequiredMixin, ListView):
     model = Role
     template_name = 'admin/roles/role_list.html'
     context_object_name = 'roles'
     queryset = Role.objects.order_by('-id')
 
-class RoleCreateView(SuccessMessageMixin, CreateView):
+class RoleCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = Role
     template_name = 'admin/roles/role_form.html'
     fields = ['name', 'description']
@@ -130,7 +133,7 @@ class RoleCreateView(SuccessMessageMixin, CreateView):
                 RolePermission.objects.filter(role=self.object, module=module).delete()
         return response
 
-class RoleUpdateView(SuccessMessageMixin, UpdateView):
+class RoleUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Role
     template_name = 'admin/roles/role_form.html'
     fields = ['name', 'description']
@@ -178,7 +181,7 @@ class RoleUpdateView(SuccessMessageMixin, UpdateView):
                 RolePermission.objects.filter(role=self.object, module=module).delete()
         return response
 
-class RoleDeleteView(DeleteView):
+class RoleDeleteView(AdminRequiredMixin, DeleteView):
     model = Role
     template_name = 'admin/roles/role_confirm_delete.html'
     success_url = reverse_lazy('role_list')
@@ -191,33 +194,65 @@ class RoleDeleteView(DeleteView):
 # ==========================================
 # MODULE CRUD VIEWS
 # ==========================================
-class ModuleListView(ListView):
+class ModuleListView(AdminRequiredMixin, ListView):
     model = Module
     template_name = 'admin/modules/module_list.html'
     context_object_name = 'modules'
     queryset = Module.objects.select_related('category').order_by('-id')
 
-class ModuleCreateView(SuccessMessageMixin, CreateView):
+class ModuleCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = Module
     template_name = 'admin/modules/module_form.html'
-    fields = ['category', 'name']
+    fields = ['category', 'name', 'icon', 'url_name', 'order']
     success_url = reverse_lazy('module_list')
     success_message = "Module created successfully!"
 
-class ModuleUpdateView(SuccessMessageMixin, UpdateView):
+class ModuleUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Module
     template_name = 'admin/modules/module_form.html'
-    fields = ['category', 'name']
+    fields = ['category', 'name', 'icon', 'url_name', 'order']
     success_url = reverse_lazy('module_list')
     success_message = "Module updated successfully!"
 
-class ModuleDeleteView(DeleteView):
+class ModuleDeleteView(AdminRequiredMixin, DeleteView):
     model = Module
     template_name = 'admin/modules/module_confirm_delete.html'
     success_url = reverse_lazy('module_list')
     
     def form_valid(self, form):
         messages.success(self.request, "Module deleted successfully!")
+        return super().form_valid(form)
+
+# ==========================================
+# MODULE CATEGORY CRUD VIEWS
+# ==========================================
+class ModuleCategoryListView(AdminRequiredMixin, ListView):
+    model = ModuleCategory
+    template_name = 'admin/module_categories/module_category_list.html'
+    context_object_name = 'categories'
+    queryset = ModuleCategory.objects.order_by('order')
+
+class ModuleCategoryCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
+    model = ModuleCategory
+    template_name = 'admin/module_categories/module_category_form.html'
+    fields = ['name', 'order']
+    success_url = reverse_lazy('module_category_list')
+    success_message = "Module Category created successfully!"
+
+class ModuleCategoryUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = ModuleCategory
+    template_name = 'admin/module_categories/module_category_form.html'
+    fields = ['name', 'order']
+    success_url = reverse_lazy('module_category_list')
+    success_message = "Module Category updated successfully!"
+
+class ModuleCategoryDeleteView(AdminRequiredMixin, DeleteView):
+    model = ModuleCategory
+    template_name = 'admin/module_categories/module_category_confirm_delete.html'
+    success_url = reverse_lazy('module_category_list')
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Module Category deleted successfully!")
         return super().form_valid(form)
 
 
@@ -257,6 +292,7 @@ def api_signup(request):
                 email=email,
                 phone_number=phone,
                 password=password,
+                initial_password=password,
                 first_name=first_name,
                 last_name=last_name,
                 role=student_role
@@ -469,3 +505,88 @@ def api_update_role_permissions(request, role_id):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+# --- Instructor Management ---
+
+class InstructorListView(AdminRequiredMixin, ListView):
+    model = CustomUser
+    template_name = 'admin/instructors/instructor_list.html'
+    context_object_name = 'instructors'
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role__name__icontains='instructor').order_by('-id')
+
+class InstructorCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
+    model = CustomUser
+    form_class = InstructorCreationForm
+    template_name = 'admin/instructors/instructor_form.html'
+    success_url = reverse_lazy('instructor_list')
+    success_message = "Instructor created successfully!"
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.initial_password = form.cleaned_data['password']
+        user.set_password(form.cleaned_data['password'])
+        # Set role to Instructor
+        instructor_role, _ = Role.objects.get_or_create(name='Instructor')
+        user.role = instructor_role
+        user.save()
+        user.student_code = f"INS{user.id:05d}"
+        user.save()
+        return super().form_valid(form)
+
+class InstructorUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CustomUser
+    form_class = InstructorChangeForm
+    template_name = 'admin/instructors/instructor_form.html'
+    success_url = reverse_lazy('instructor_list')
+    success_message = "Instructor updated successfully!"
+
+class InstructorDeleteView(AdminRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = CustomUser
+    template_name = 'admin/instructors/instructor_confirm_delete.html'
+    success_url = reverse_lazy('instructor_list')
+    success_message = "Instructor deleted successfully!"
+
+
+# --- Student Management ---
+
+class StudentListView(AdminRequiredMixin, ListView):
+    model = CustomUser
+    template_name = 'admin/students/student_list.html'
+    context_object_name = 'students'
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role__name__icontains='student').order_by('-id')
+
+class StudentCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
+    model = CustomUser
+    form_class = StudentCreationForm
+    template_name = 'admin/students/student_form.html'
+    success_url = reverse_lazy('student_list')
+    success_message = "Student created successfully!"
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.initial_password = form.cleaned_data['password']
+        user.set_password(form.cleaned_data['password'])
+        # Set role to Student
+        student_role, _ = Role.objects.get_or_create(name='Student')
+        user.role = student_role
+        user.save()
+        user.student_code = f"STU{user.id:05d}"
+        user.save()
+        return super().form_valid(form)
+
+class StudentUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CustomUser
+    form_class = StudentChangeForm
+    template_name = 'admin/students/student_form.html'
+    success_url = reverse_lazy('student_list')
+    success_message = "Student updated successfully!"
+
+class StudentDeleteView(AdminRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = CustomUser
+    template_name = 'admin/students/student_confirm_delete.html'
+    success_url = reverse_lazy('student_list')
+    success_message = "Student deleted successfully!"
+
