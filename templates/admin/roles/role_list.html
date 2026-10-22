@@ -3,58 +3,103 @@
 {% block title %}Roles & Permissions{% endblock %}
 
 {% block content %}
+<!-- Top Header Banner -->
 <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-        <i class="fa-solid fa-user-shield" style="color: var(--admin-primary);"></i> Roles & Permissions
-    </h1>
-    <a href="{% url 'role_create' %}" class="btn" style="border: 1px solid var(--admin-primary); background: transparent; color: var(--admin-primary); padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s;" onmouseover="this.style.background='var(--admin-primary)'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='var(--admin-primary)'">
-        <i class="fa-solid fa-plus"></i> Add new role
+    <div>
+        <h1 style="font-size: 15px; color: #0f172a; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-shield-halved" style="color: var(--admin-primary); font-size: 16px;"></i> Roles & Permissions Management
+        </h1>
+        <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">Configure security roles and fine-grained access matrix across all LMS modules.</p>
+    </div>
+    <a href="{% url 'role_create' %}" class="btn" style="border: 1px solid var(--admin-primary); background: var(--admin-primary); color: white; padding: 0.45rem 1.15rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);" onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
+        <i class="fa-solid fa-plus"></i> Add New Role
     </a>
 </div>
 
+<!-- Main Table Card -->
 <div class="card" style="padding: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
-    <h2 style="font-size: 12px; text-transform: uppercase; margin: 0 0 1.5rem 0; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-        <i class="fa-solid fa-list-ul" style="color: var(--admin-primary); margin-right: 0.25rem;"></i> ROLE LIST
-    </h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+        <h2 style="font-size: 12px; text-transform: uppercase; margin: 0; color: #475569; font-weight: 700; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-table-list" style="color: var(--admin-primary);"></i> System Roles ({{ roles|length }})
+        </h2>
+        <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">
+            <i class="fa-solid fa-circle-info"></i> Permissions determine CRUD capabilities per module
+        </span>
+    </div>
+
     <div style="overflow-x: auto;">
         <table class="datatable" style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                 <tr>
-                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">S.NO.</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; width: 60px;">S.NO.</th>
                     <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Role Name</th>
                     <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Description</th>
-                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Permissions</th>
-                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: right;">Actions</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Assigned Users</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Active Modules</th>
+                    <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: right; width: 120px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for role in roles %}
                 <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem; font-size: 12px; color: #64748b;"></td>
+                    <td style="padding: 1rem; font-size: 12px; color: #64748b; font-weight: 600;"></td>
                     <td style="padding: 1rem; font-size: 12px; color: #0f172a; font-weight: 600;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                                <i class="fa-solid fa-user-shield"></i>
+                            <div style="width: 34px; height: 34px; border-radius: 8px; background: {% if 'admin' in role.name|lower %}#eef2ff{% elif 'instructor' in role.name|lower or 'faculty' in role.name|lower %}#ecfdf5{% else %}#f8fafc{% endif %}; color: {% if 'admin' in role.name|lower %}var(--admin-primary){% elif 'instructor' in role.name|lower or 'faculty' in role.name|lower %}#059669{% else %}#64748b{% endif %}; border: 1px solid {% if 'admin' in role.name|lower %}#c7d2fe{% elif 'instructor' in role.name|lower or 'faculty' in role.name|lower %}#a7f3d0{% else %}#e2e8f0{% endif %}; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                {% if 'admin' in role.name|lower %}
+                                    <i class="fa-solid fa-crown"></i>
+                                {% elif 'instructor' in role.name|lower or 'teacher' in role.name|lower %}
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                {% elif 'student' in role.name|lower %}
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-user-shield"></i>
+                                {% endif %}
                             </div>
-                            {{ role.name|title }}
+                            <div>
+                                <span style="font-weight: 700; font-size: 13px; color: #0f172a;">{{ role.name|title }}</span>
+                                {% if 'admin' in role.name|lower %}
+                                    <span style="margin-left: 0.35rem; font-size: 9px; padding: 1px 6px; border-radius: 10px; background: #eef2ff; color: #4338ca; font-weight: 700; text-transform: uppercase;">System</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </td>
-                    <td style="padding: 1rem; font-size: 12px; color: #64748b; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <td style="padding: 1rem; font-size: 12px; color: #64748b; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         {{ role.description|default:"No description provided" }}
                     </td>
-                    <td style="padding: 1rem;">
-                        <span style="background: #d1fae5; color: #065f46; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #a7f3d0;">
-                            {{ role.permissions.count }} Permissions
+                    <td style="padding: 1rem; text-align: center;">
+                        <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: #f8fafc; color: #334155; padding: 0.25rem 0.65rem; border-radius: 1rem; font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1;">
+                            <i class="fa-solid fa-users" style="color: #64748b; font-size: 10px;"></i>
+                            {{ role.users_count|default:"0" }}
                         </span>
                     </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        {% if role.active_permissions_count > 0 %}
+                            <span style="background: #ecfdf5; color: #047857; padding: 0.25rem 0.65rem; border-radius: 1rem; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                <i class="fa-solid fa-lock-open" style="font-size: 10px;"></i>
+                                {{ role.active_permissions_count }} Modules Permitted
+                            </span>
+                        {% else %}
+                            <span style="background: #fef2f2; color: #b91c1c; padding: 0.25rem 0.65rem; border-radius: 1rem; font-size: 11px; font-weight: 600; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                <i class="fa-solid fa-lock" style="font-size: 10px;"></i>
+                                No Permissions
+                            </span>
+                        {% endif %}
+                    </td>
                     <td style="padding: 1rem; text-align: right;">
-                        <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
-                            <a href="{% url 'role_update' role.pk %}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; border-radius: 4px; text-decoration: none; transition: all 0.2s; border: 1px solid #e2e8f0;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569'">
+                        <div style="display: flex; gap: 0.4rem; justify-content: flex-end; align-items: center;">
+                            <a href="{% url 'role_update' role.pk %}" title="Configure Role Permissions" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; border-radius: 6px; text-decoration: none; transition: all 0.2s; border: 1px solid #e2e8f0;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569'">
                                 <i class="fa-solid fa-pen" style="font-size: 11px;"></i>
                             </a>
-                            <a href="{% url 'role_delete' role.pk %}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #fef2f2; color: #ef4444; border-radius: 4px; text-decoration: none; transition: all 0.2s; border: 1px solid #fee2e2;" onmouseover="this.style.background='#fee2e2'; this.style.color='#991b1b'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
-                                <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
-                            </a>
+                            {% if 'admin' in role.name|lower or 'superadmin' in role.name|lower %}
+                                <span title="Protected Role cannot be deleted" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #cbd5e1; border-radius: 6px; border: 1px solid #e2e8f0; cursor: not-allowed;">
+                                    <i class="fa-solid fa-shield" style="font-size: 11px;"></i>
+                                </span>
+                            {% else %}
+                                <a href="{% url 'role_delete' role.pk %}" title="Delete Role" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #fef2f2; color: #ef4444; border-radius: 6px; text-decoration: none; transition: all 0.2s; border: 1px solid #fee2e2;" onmouseover="this.style.background='#fee2e2'; this.style.color='#991b1b'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
+                                    <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
+                                </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

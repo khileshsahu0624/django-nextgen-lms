@@ -1,15 +1,21 @@
 {% extends 'admin/layout/base.html' %}
 
-{% block title %}{% if object %}Edit Role{% else %}Create Role{% endif %}{% endblock %}
+{% block title %}{% if object %}Edit Role: {{ object.name }}{% else %}Create Role{% endif %}{% endblock %}
 
 {% block content %}
+<!-- Top Navigation Header -->
 <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <h1 style="font-size: 14px; color: #111827; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-        <i class="fa-solid {% if object %}fa-pen-to-square{% else %}fa-plus{% endif %}" style="color: var(--admin-primary);"></i> 
-        {% if object %}Edit Role: {{ object.name }}{% else %}Create New Role{% endif %}
-    </h1>
-    <a href="{% url 'role_list' %}" class="btn" style="border: 1px solid #e5e7eb; background: #fff; color: #374151; padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-        <i class="fa-solid fa-arrow-left"></i> Back to List
+    <div>
+        <h1 style="font-size: 15px; color: #0f172a; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid {% if object %}fa-pen-to-square{% else %}fa-shield-plus{% endif %}" style="color: var(--admin-primary); font-size: 16px;"></i> 
+            {% if object %}Edit Role & Matrix: {{ object.name }}{% else %}Create New Security Role{% endif %}
+        </h1>
+        <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">
+            {% if object %}Modify privileges across categories and submodules for this role.{% else %}Define role identity and configure modular CRUD permissions.{% endif %}
+        </p>
+    </div>
+    <a href="{% url 'role_list' %}" class="btn" style="border: 1px solid #e2e8f0; background: #f8fafc; color: #334155; padding: 0.45rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a'" onmouseout="this.style.background='#f8fafc'; this.style.color='#334155'">
+        <i class="fa-solid fa-arrow-left"></i> Back to Roles
     </a>
 </div>
 
@@ -18,102 +24,206 @@
     
     <div class="card" style="width: 100%; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
         
-        <!-- SECTION 1: Role Name -->
-        <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9;">
-            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-id-badge" style="color: var(--admin-primary); font-size: 14px;"></i> Role Configuration</h3>
-            <div style="max-width: 400px; display: flex; flex-direction: column; gap: 1rem;">
+        <!-- SECTION 1: Role Identification -->
+        <div style="padding: 1.75rem 2rem; border-bottom: 1px solid #f1f5f9; background: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                    <i class="fa-solid fa-id-badge"></i>
+                </div>
                 <div>
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #334155; font-size: 12px;">Role Name <span style="color: #ef4444;">*</span></label>
+                    <h3 style="font-size: 13px; color: #0f172a; font-weight: 700; margin: 0;">Role Information</h3>
+                    <p style="margin: 0; font-size: 11px; color: #64748b;">Specify a unique identifier and descriptive overview.</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; max-width: 900px;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #334155; font-size: 12px;">
+                        Role Name <span style="color: #ef4444;">*</span>
+                    </label>
                     {{ form.name }}
                     {% if form.name.errors %}
-                        <div style="color: #ef4444; font-size: 10px; margin-top: 0.3rem; font-weight: 600;">{{ form.name.errors.0 }}</div>
+                        <div style="color: #ef4444; font-size: 11px; margin-top: 0.35rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+                            <i class="fa-solid fa-circle-exclamation"></i> {{ form.name.errors.0 }}
+                        </div>
                     {% endif %}
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #334155; font-size: 12px;">Description</label>
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #334155; font-size: 12px;">
+                        Role Description
+                    </label>
                     {{ form.description }}
                     {% if form.description.errors %}
-                        <div style="color: #ef4444; font-size: 10px; margin-top: 0.3rem; font-weight: 600;">{{ form.description.errors.0 }}</div>
+                        <div style="color: #ef4444; font-size: 11px; margin-top: 0.35rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+                            <i class="fa-solid fa-circle-exclamation"></i> {{ form.description.errors.0 }}
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 2: Permissions Configuration -->
-        <div style="padding: 2rem; background: #fafaf9;">
-            <h3 style="font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-key" style="color: var(--admin-primary); font-size: 14px;"></i> Permissions</h3>
-            
-            <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; background: white;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <!-- SECTION 2: Permissions Configuration Matrix -->
+        <div style="padding: 1.75rem 2rem; background: #fafaf9;">
+            <!-- Matrix Header & Global Quick Actions -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <h3 style="font-size: 13px; color: #0f172a; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-key" style="color: var(--admin-primary); font-size: 14px;"></i> Module Permissions Matrix
+                    </h3>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 11px; color: #64748b;">
+                        Configure read, create, update, and delete access. Quick-toggle whole columns or categories.
+                    </p>
+                </div>
+                
+                <!-- Quick Filter and Master Controls -->
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                    <!-- Live Search in Matrix -->
+                    <div style="position: relative; width: 220px;">
+                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #94a3b8;"></i>
+                        <input type="text" id="module-search" placeholder="Filter modules..." style="width: 100%; height: 32px; padding: 0.35rem 0.6rem 0.35rem 2rem; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; outline: none; transition: all 0.2s;">
+                    </div>
+                    
+                    <!-- Global Master Buttons -->
+                    <button type="button" id="btn-select-all-global" style="background: #eef2ff; color: var(--admin-primary); border: 1px solid #c7d2fe; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;">
+                        <i class="fa-solid fa-check-double"></i> Select All
+                    </button>
+                    <button type="button" id="btn-deselect-all-global" style="background: #fff; color: #64748b; border: 1px solid #cbd5e1; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;">
+                        <i class="fa-solid fa-ban"></i> Deselect All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Permission Table -->
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                <table id="permissions-table" style="width: 100%; border-collapse: collapse; text-align: left;">
                     <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                         <tr>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700;">Module</th>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">All</th>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Create</th>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Read</th>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Update</th>
-                            <th style="padding: 0.75rem 1rem; font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 700; text-align: center;">Delete</th>
+                            <th style="padding: 0.85rem 1.25rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; width: 45%;">
+                                Module Name
+                            </th>
+                            <th style="padding: 0.85rem 0.75rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; text-align: center; width: 11%;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                    <span>All</span>
+                                    <input type="checkbox" id="master-all-col" title="Select/Deselect All Rows" style="accent-color: var(--admin-primary); cursor: pointer; width: 14px; height: 14px;">
+                                </div>
+                            </th>
+                            <th style="padding: 0.85rem 0.75rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; text-align: center; width: 11%;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                    <span style="color: #0369a1;">Create</span>
+                                    <input type="checkbox" id="master-create-col" title="Select All Create" style="accent-color: #0284c7; cursor: pointer; width: 14px; height: 14px;">
+                                </div>
+                            </th>
+                            <th style="padding: 0.85rem 0.75rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; text-align: center; width: 11%;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                    <span style="color: #047857;">Read</span>
+                                    <input type="checkbox" id="master-read-col" title="Select All Read" style="accent-color: #10b981; cursor: pointer; width: 14px; height: 14px;">
+                                </div>
+                            </th>
+                            <th style="padding: 0.85rem 0.75rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; text-align: center; width: 11%;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                    <span style="color: #d97706;">Update</span>
+                                    <input type="checkbox" id="master-update-col" title="Select All Update" style="accent-color: #f59e0b; cursor: pointer; width: 14px; height: 14px;">
+                                </div>
+                            </th>
+                            <th style="padding: 0.85rem 0.75rem; font-size: 11px; color: #334155; text-transform: uppercase; font-weight: 700; text-align: center; width: 11%;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                                    <span style="color: #b91c1c;">Delete</span>
+                                    <input type="checkbox" id="master-delete-col" title="Select All Delete" style="accent-color: #ef4444; cursor: pointer; width: 14px; height: 14px;">
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for category in categories %}
-                            <tr class="category-header" data-target="cat-{{ category.id }}" style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
-                                <td colspan="6" style="padding: 0.75rem 1rem; font-weight: 700; font-size: 12px; color: #334155;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>{{ category.name }}</span>
-                                        <i class="fa-solid fa-chevron-up toggle-icon" style="transition: transform 0.3s; color: #94a3b8;"></i>
+                            <!-- Category Row -->
+                            <tr class="category-header-row" data-cat-id="{{ category.id }}" style="background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #cbd5e1;">
+                                <td colspan="2" style="padding: 0.75rem 1.25rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                        <button type="button" class="btn-toggle-cat" data-target="cat-{{ category.id }}" style="background: none; border: none; cursor: pointer; color: #64748b; font-size: 12px; padding: 2px 4px;">
+                                            <i class="fa-solid fa-chevron-down toggle-icon" style="transition: transform 0.2s;"></i>
+                                        </button>
+                                        <span style="font-weight: 700; font-size: 12px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.04em;">
+                                            {{ category.name }}
+                                        </span>
+                                        <span style="background: #e2e8f0; color: #475569; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px;">
+                                            {{ category.modules.all|length }}
+                                        </span>
                                     </div>
                                 </td>
+                                <td colspan="4" style="padding: 0.75rem 1.25rem; text-align: right;">
+                                    <button type="button" class="btn-toggle-category-all" data-cat-id="{{ category.id }}" style="background: white; border: 1px solid #cbd5e1; color: #475569; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+                                        <i class="fa-solid fa-layer-group"></i> Toggle Category
+                                    </button>
+                                </td>
                             </tr>
+
+                            <!-- Submodule Rows -->
                             {% for module in category.modules.all %}
-                            <tr class="cat-{{ category.id }}-row" style="border-bottom: 1px solid #f1f5f9; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                <td style="padding: 0.75rem 1rem; color: #0f172a; font-weight: 500;">{{ module.name }}</td>
+                            <tr class="module-row cat-{{ category.id }}-row" data-module-name="{{ module.name|lower }}" style="border-bottom: 1px solid #f1f5f9; font-size: 12px; transition: background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 0.75rem 1.25rem; color: #0f172a; font-weight: 500;">
+                                    <div style="display: flex; align-items: center; gap: 0.6rem; padding-left: 1.25rem;">
+                                        <i class="{{ module.icon|default:'fa-solid fa-cube' }}" style="color: #94a3b8; font-size: 12px; width: 14px;"></i>
+                                        <span>{{ module.name }}</span>
+                                        {% if module.url_name %}
+                                            <span style="font-size: 10px; color: #94a3b8; font-family: monospace; background: #f8fafc; padding: 1px 4px; border-radius: 4px; border: 1px solid #e2e8f0;">{{ module.url_name }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
                                 
-                                <td style="padding: 0.75rem 1rem; text-align: center;">
-                                    <input type="checkbox" class="all-check" data-module-id="{{ module.id }}" {% if module.perm.can_do_all %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                <td style="padding: 0.75rem 0.75rem; text-align: center;">
+                                    <input type="checkbox" class="all-check all-check-{{ module.id }}" data-module-id="{{ module.id }}" data-cat-id="{{ category.id }}" {% if module.perm.can_do_all %}checked{% endif %} style="accent-color: var(--admin-primary); width: 15px; height: 15px; cursor: pointer;">
                                 </td>
-                                <td style="padding: 0.75rem 1rem; text-align: center;">
-                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="create_{{ module.id }}" {% if module.perm.can_create %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                <td style="padding: 0.75rem 0.75rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-create perm-check-{{ module.id }} perm-cat-{{ category.id }}" name="create_{{ module.id }}" data-module-id="{{ module.id }}" {% if module.perm.can_create %}checked{% endif %} style="accent-color: #0284c7; width: 15px; height: 15px; cursor: pointer;">
                                 </td>
-                                <td style="padding: 0.75rem 1rem; text-align: center;">
-                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="read_{{ module.id }}" {% if module.perm.can_read %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                <td style="padding: 0.75rem 0.75rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-read perm-check-{{ module.id }} perm-cat-{{ category.id }}" name="read_{{ module.id }}" data-module-id="{{ module.id }}" {% if module.perm.can_read %}checked{% endif %} style="accent-color: #10b981; width: 15px; height: 15px; cursor: pointer;">
                                 </td>
-                                <td style="padding: 0.75rem 1rem; text-align: center;">
-                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="update_{{ module.id }}" {% if module.perm.can_update %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                <td style="padding: 0.75rem 0.75rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-update perm-check-{{ module.id }} perm-cat-{{ category.id }}" name="update_{{ module.id }}" data-module-id="{{ module.id }}" {% if module.perm.can_update %}checked{% endif %} style="accent-color: #f59e0b; width: 15px; height: 15px; cursor: pointer;">
                                 </td>
-                                <td style="padding: 0.75rem 1rem; text-align: center;">
-                                    <input type="checkbox" class="perm-check perm-check-{{ module.id }}" name="delete_{{ module.id }}" {% if module.perm.can_delete %}checked{% endif %} style="accent-color: var(--admin-primary); width: 14px; height: 14px; cursor: pointer;">
+                                <td style="padding: 0.75rem 0.75rem; text-align: center;">
+                                    <input type="checkbox" class="perm-check perm-delete perm-check-{{ module.id }} perm-cat-{{ category.id }}" name="delete_{{ module.id }}" data-module-id="{{ module.id }}" {% if module.perm.can_delete %}checked{% endif %} style="accent-color: #ef4444; width: 15px; height: 15px; cursor: pointer;">
                                 </td>
                             </tr>
                             {% endfor %}
                         {% empty %}
                             <tr>
-                                <td colspan="6" style="padding: 2rem; text-align: center; color: #94a3b8; font-size: 12px;">
-                                    No modules found. Please create modules in the admin panel first.
+                                <td colspan="6" style="padding: 3rem; text-align: center; color: #94a3b8; font-size: 13px;">
+                                    <i class="fa-solid fa-folder-open" style="font-size: 24px; margin-bottom: 0.5rem; display: block;"></i>
+                                    No modules found. Please run seed modules or create modules first.
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <!-- Premium Sticky Footer -->
-        <div style="background: #fff; padding: 1.25rem 2rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 0; z-index: 10; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
-            <a href="{% url 'role_list' %}" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 6px; background: #f1f5f9; color: #475569; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</a>
-            <button type="submit" class="btn" style="padding: 0.5rem 2rem; border-radius: 6px; background: var(--admin-primary); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-size: 12px; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px -1px rgba(79,70,229,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                <i class="fa-solid fa-check"></i> {% if object %}Save Changes{% else %}Create Role{% endif %}
-            </button>
+            <!-- Sticky Save Actions Footer -->
+            <div style="background: #fff; margin-top: 1.5rem; padding: 1.25rem 2rem; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 15px; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 0.5rem;">
+                    <span id="selected-summary-badge" style="background: #eef2ff; color: var(--admin-primary); font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 1rem; border: 1px solid #c7d2fe;">
+                        0 Permissions Selected
+                    </span>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <a href="{% url 'role_list' %}" class="btn" style="padding: 0.5rem 1.25rem; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1; color: #475569; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">Cancel</a>
+                    <button type="submit" class="btn" style="padding: 0.5rem 1.75rem; border-radius: 6px; background: var(--admin-primary); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.45rem; font-size: 12px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);" onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
+                        <i class="fa-solid fa-check"></i> {% if object %}Save Changes{% else %}Create Role{% endif %}
+                    </button>
+                </div>
+            </div>
+
         </div>
 
     </div>
 </form>
 
 <style>
-    /* Styling for Django generated inputs inside this form */
+    /* Django form inputs styling */
     input[type="text"], textarea {
         width: 100%;
-        padding: 0.5rem 0.75rem;
+        padding: 0.55rem 0.75rem;
         background: #f8fafc;
         border: 1px solid {% if form.name.errors %}#ef4444{% else %}#cbd5e1{% endif %};
         border-radius: 6px;
@@ -125,7 +235,7 @@
         box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
     }
     input[type="text"] {
-        height: 36px;
+        height: 38px;
     }
     textarea {
         min-height: 80px;
@@ -134,7 +244,7 @@
     input[type="text"]:focus, textarea:focus {
         background: #fff;
         border-color: var(--admin-primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
     {% if form.name.errors %}
     input[type="text"], textarea {
@@ -145,68 +255,184 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle "All" checkbox click
+        const updateSummaryBadge = () => {
+            const checkedCount = document.querySelectorAll('.perm-check:checked').length;
+            const badge = document.getElementById('selected-summary-badge');
+            if (badge) {
+                badge.innerText = `${checkedCount} Permission${checkedCount === 1 ? '' : 's'} Selected`;
+            }
+        };
+
+        // Initialize state on load
+        updateSummaryBadge();
+
+        // 1. Row Level "All" Checkbox
         document.querySelectorAll('.all-check').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const moduleId = this.getAttribute('data-module-id');
                 const isChecked = this.checked;
-                
-                document.querySelectorAll(`.perm-check-${moduleId}`).forEach(permCheck => {
-                    permCheck.checked = isChecked;
+                document.querySelectorAll(`.perm-check-${moduleId}`).forEach(cb => {
+                    cb.checked = isChecked;
                 });
+                updateSummaryBadge();
             });
         });
 
-        // Handle individual permission click to update "All" checkbox
+        // 2. Individual Checkbox Changes -> sync Row "All" checkbox
         document.querySelectorAll('.perm-check').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
-                const moduleId = this.className.match(/perm-check-(\d+)/)[1];
-                const allCheckboxes = document.querySelectorAll(`.perm-check-${moduleId}`);
-                const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                const moduleId = this.getAttribute('data-module-id');
+                const allModuleChecks = document.querySelectorAll(`.perm-check-${moduleId}`);
+                const allChecked = Array.from(allModuleChecks).every(cb => cb.checked);
                 
-                document.querySelector(`.all-check[data-module-id="${moduleId}"]`).checked = allChecked;
+                const rowAllCheck = document.querySelector(`.all-check[data-module-id="${moduleId}"]`);
+                if (rowAllCheck) {
+                    rowAllCheck.checked = allChecked;
+                }
+                updateSummaryBadge();
             });
         });
 
-        // Accordion functionality for Categories
-        document.querySelectorAll('.category-header').forEach(header => {
-            header.addEventListener('click', function() {
+        // 3. Column Master Toggles (Master All, Master Create, Master Read, Master Update, Master Delete)
+        const setupMasterColumnToggle = (masterId, targetSelector) => {
+            const master = document.getElementById(masterId);
+            if (master) {
+                master.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    document.querySelectorAll(targetSelector).forEach(cb => {
+                        // Only affect visible rows if searched
+                        const row = cb.closest('tr');
+                        if (row && row.style.display !== 'none') {
+                            cb.checked = isChecked;
+                        }
+                    });
+                    
+                    // If toggling Master All, also set all permissions
+                    if (masterId === 'master-all-col') {
+                        document.querySelectorAll('.perm-check').forEach(cb => {
+                            const row = cb.closest('tr');
+                            if (row && row.style.display !== 'none') {
+                                cb.checked = isChecked;
+                            }
+                        });
+                    }
+
+                    // Recalculate row-level All checks
+                    document.querySelectorAll('.all-check').forEach(rowCheck => {
+                        const moduleId = rowCheck.getAttribute('data-module-id');
+                        const checks = document.querySelectorAll(`.perm-check-${moduleId}`);
+                        rowCheck.checked = Array.from(checks).every(c => c.checked);
+                    });
+
+                    updateSummaryBadge();
+                });
+            }
+        };
+
+        setupMasterColumnToggle('master-all-col', '.all-check');
+        setupMasterColumnToggle('master-create-col', '.perm-create');
+        setupMasterColumnToggle('master-read-col', '.perm-read');
+        setupMasterColumnToggle('master-update-col', '.perm-update');
+        setupMasterColumnToggle('master-delete-col', '.perm-delete');
+
+        // 4. Global Action Buttons (Select All / Deselect All)
+        const btnSelectAll = document.getElementById('btn-select-all-global');
+        if (btnSelectAll) {
+            btnSelectAll.addEventListener('click', function() {
+                document.querySelectorAll('.perm-check, .all-check').forEach(cb => cb.checked = true);
+                const masterCol = document.getElementById('master-all-col');
+                if (masterCol) masterCol.checked = true;
+                updateSummaryBadge();
+            });
+        }
+
+        const btnDeselectAll = document.getElementById('btn-deselect-all-global');
+        if (btnDeselectAll) {
+            btnDeselectAll.addEventListener('click', function() {
+                document.querySelectorAll('.perm-check, .all-check, #master-all-col, #master-create-col, #master-read-col, #master-update-col, #master-delete-col').forEach(cb => cb.checked = false);
+                updateSummaryBadge();
+            });
+        }
+
+        // 5. Category-Level Master Toggle
+        document.querySelectorAll('.btn-toggle-category-all').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const catId = this.getAttribute('data-cat-id');
+                const catChecks = document.querySelectorAll(`.perm-cat-${catId}`);
+                const someUnchecked = Array.from(catChecks).some(cb => !cb.checked);
+                
+                catChecks.forEach(cb => cb.checked = someUnchecked);
+                
+                // Update the row-level "All" checks inside this category
+                document.querySelectorAll(`.all-check[data-cat-id="${catId}"]`).forEach(allCheck => {
+                    allCheck.checked = someUnchecked;
+                });
+
+                updateSummaryBadge();
+            });
+        });
+
+        // 6. Accordion Fold/Unfold for Categories
+        document.querySelectorAll('.btn-toggle-cat').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 const targetClass = this.getAttribute('data-target');
                 const rows = document.querySelectorAll(`.${targetClass}-row`);
                 const icon = this.querySelector('.toggle-icon');
                 
-                let isHidden = false;
+                let isNowHidden = false;
                 rows.forEach(row => {
                     if (row.style.display === 'none') {
                         row.style.display = 'table-row';
-                        isHidden = false;
                     } else {
                         row.style.display = 'none';
-                        isHidden = true;
+                        isNowHidden = true;
                     }
                 });
                 
-                if (isHidden) {
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    icon.style.transform = 'rotate(0deg)';
+                if (icon) {
+                    icon.style.transform = isNowHidden ? 'rotate(-90deg)' : 'rotate(0deg)';
                 }
             });
         });
 
-        // Form Validation: Ensure at least one permission is checked before saving
+        // 7. Live Search / Filter within Permission Matrix
+        const searchInput = document.getElementById('module-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase().trim();
+                const moduleRows = document.querySelectorAll('.module-row');
+                
+                moduleRows.forEach(row => {
+                    const name = row.getAttribute('data-module-name') || '';
+                    if (name.includes(term)) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Auto hide category headers if no child modules match
+                document.querySelectorAll('.category-header-row').forEach(header => {
+                    const catId = header.getAttribute('data-cat-id');
+                    const visibleChildren = document.querySelectorAll(`.cat-${catId}-row:not([style*="display: none"])`);
+                    header.style.display = visibleChildren.length > 0 ? 'table-row' : 'none';
+                });
+            });
+        }
+
+        // 8. Form Submit Validation
         const roleForm = document.getElementById('role-form');
         if (roleForm) {
             roleForm.addEventListener('submit', function(e) {
-                const allCheckboxes = document.querySelectorAll('.perm-check');
-                const isChecked = Array.from(allCheckboxes).some(cb => cb.checked);
-                
-                if (!isChecked) {
-                    e.preventDefault(); // Stop form submission
+                const isAnyChecked = Array.from(document.querySelectorAll('.perm-check')).some(cb => cb.checked);
+                if (!isAnyChecked) {
+                    e.preventDefault();
                     if (typeof showNotification === 'function') {
-                        showNotification('Please select at least one permission before saving.', 'error');
+                        showNotification('Please configure at least one module permission for this role.', 'warning');
                     } else {
-                        alert('Please select at least one permission before saving.');
+                        alert('Please configure at least one module permission for this role.');
                     }
                 }
             });

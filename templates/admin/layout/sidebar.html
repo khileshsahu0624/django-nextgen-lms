@@ -1,61 +1,165 @@
-<div class="admin-sidebar">
-    <div style="padding: 12px 1rem; border-bottom: 1px solid var(--admin-border); text-align: center; height: 70px; display: flex; align-items: center; justify-content: center;">
-        <h2 style="color: var(--admin-primary); font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin:0;">
-            <i class="fa-solid fa-graduation-cap" style="font-size: 12px;"></i> <span class="sidebar-header-text">LMS Admin</span>
-        </h2>
+<div class="admin-sidebar" style="display: flex; flex-direction: column;">
+    <!-- Brand / Logo Area -->
+    <div style="padding: 0 1.25rem; border-bottom: 1px solid var(--admin-border); height: 70px; display: flex; align-items: center; justify-content: space-between; background: #ffffff;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div style="width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="sidebar-header-text" style="display: flex; flex-direction: column;">
+                <span style="font-weight: 800; font-size: 13px; color: #0f172a; letter-spacing: -0.01em;">NextGen LMS</span>
+                <span style="font-size: 10px; color: #64748b; font-weight: 500;">Control Console</span>
+            </div>
+        </div>
     </div>
 
+    <!-- User Profile Strip inside Sidebar -->
+    {% if request.user.is_authenticated %}
+    <div class="sidebar-user-strip" style="padding: 0.85rem 1.25rem; border-bottom: 1px solid #f1f5f9; background: #fafafa; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0e7ff; color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            {% if request.user.profile_photo %}
+                <img src="{{ request.user.profile_photo.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                {{ request.user.first_name|default:request.user.username|make_list|first|upper }}
+            {% endif %}
+        </div>
+        <div class="sidebar-header-text" style="overflow: hidden; flex: 1;">
+            <div style="font-size: 12px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+            <div style="font-size: 10px; color: var(--admin-primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">
+                {{ request.user.role.name|default:"Administrator" }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Sidebar Custom CSS -->
     <style>
-        .sidebar-menu { list-style: none; padding: 12px 11px; }
-        .sidebar-menu li { margin-bottom: 0.1rem; }
+        .admin-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-menu { 
+            list-style: none; 
+            padding: 0.75rem 0.65rem; 
+            margin: 0;
+            flex: 1;
+        }
+        .sidebar-menu li { 
+            margin-bottom: 0.2rem; 
+        }
         .sidebar-menu a {
             text-decoration: none;
-            color: var(--admin-text-light);
+            color: #475569;
             display: flex;
             align-items: center;
-            gap: 11px;
-            padding: 0.6rem 1rem;
-            border-radius: 0.375rem;
+            gap: 10px;
+            padding: 0.55rem 0.85rem;
+            border-radius: 6px;
             font-weight: 500;
             font-size: 12px;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease-in-out;
             white-space: nowrap;
+            position: relative;
         }
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: #eef2ff;
+        .sidebar-menu a:hover {
+            background-color: #f1f5f9;
             color: var(--admin-primary);
         }
-        .sidebar-menu i { width: 16px; text-align: center; font-size: 13px; transition: all 0.2s ease; }
+        .sidebar-menu a.active {
+            background-color: #eef2ff;
+            color: var(--admin-primary);
+            font-weight: 600;
+        }
+        .sidebar-menu a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 3.5px;
+            background: var(--admin-primary);
+            border-radius: 0 3px 3px 0;
+        }
+        .sidebar-menu i { 
+            width: 18px; 
+            text-align: center; 
+            font-size: 13px; 
+            color: #64748b;
+            transition: color 0.15s ease;
+        }
+        .sidebar-menu a:hover i,
+        .sidebar-menu a.active i {
+            color: var(--admin-primary);
+        }
         .menu-title {
             font-size: 10px;
             text-transform: uppercase;
             font-weight: 700;
-            color: #9ca3af;
-            letter-spacing: 0.05em;
-            margin: 1.25rem 0 0.25rem 1rem;
+            color: #94a3b8;
+            letter-spacing: 0.06em;
+            margin: 1.15rem 0 0.35rem 0.85rem;
             white-space: nowrap;
         }
+        .menu-title:first-child {
+            margin-top: 0.25rem;
+        }
         .badge-count {
-            background: #ef4444;
-            color: white;
             font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 10px;
+            padding: 2px 7px;
+            border-radius: 12px;
             margin-left: auto;
-            font-weight: 600;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        /* Collapsed Sidebar Tweaks */
+        body.sidebar-collapsed .sidebar-user-strip {
+            display: none !important;
+        }
+        body.sidebar-collapsed .sidebar-menu a {
+            justify-content: center;
+            padding: 0.7rem 0;
+        }
+        body.sidebar-collapsed .sidebar-menu a::before {
+            display: none;
         }
     </style>
 
+    <!-- Navigation Menu Items -->
     <ul class="sidebar-menu">
         {% for category in sidebar_categories %}
             <div class="menu-title">{{ category.name }}</div>
-            {% for module in category.modules.all %}
+            {% for module in category.permitted_modules|default:category.modules.all %}
             <li>
-                <a href="{{ module.resolved_url }}" class="{% if request.resolver_match.url_name == module.url_name %}active{% endif %}">
-                    <i class="{{ module.icon }}"></i> <span class="menu-text">{{ module.name }}</span>
+                <a href="{{ module.resolved_url }}" 
+                   class="{% if module.is_active or request.resolver_match.url_name == module.url_name %}active{% endif %}"
+                   title="{{ module.name }}">
+                    <i class="{{ module.icon|default:'fa-solid fa-cube' }}"></i> 
+                    <span class="menu-text">{{ module.name }}</span>
+                    {% if module.badge_count %}
+                        <span class="badge-count" style="background: {{ module.badge_color|default:'#e0f2fe' }}; color: {{ module.badge_text_color|default:'#0369a1' }};">
+                            {{ module.badge_count }}
+                        </span>
+                    {% endif %}
                 </a>
             </li>
             {% endfor %}
         {% endfor %}
     </ul>
+
+    <!-- Quick Footer Action in Sidebar -->
+    <div style="padding: 0.75rem 1rem; border-top: 1px solid var(--admin-border); background: #ffffff;">
+        <a href="{% url 'landing_page' %}" target="_blank" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 11px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a'" onmouseout="this.style.background='#f8fafc'; this.style.color='#475569'">
+            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>
+            <span class="menu-text">View Live Site</span>
+        </a>
+    </div>
 </div>

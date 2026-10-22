@@ -94,7 +94,20 @@ class RoleListView(AdminRequiredMixin, ListView):
     model = Role
     template_name = 'admin/roles/role_list.html'
     context_object_name = 'roles'
-    queryset = Role.objects.order_by('-id')
+
+    def get_queryset(self):
+        from django.db.models import Count, Q
+        return Role.objects.annotate(
+            users_count=Count('users', distinct=True),
+            active_permissions_count=Count(
+                'permissions',
+                filter=Q(permissions__can_create=True) | 
+                       Q(permissions__can_read=True) | 
+                       Q(permissions__can_update=True) | 
+                       Q(permissions__can_delete=True),
+                distinct=True
+            )
+        ).order_by('-id')
 
 class RoleCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = Role
@@ -187,7 +200,11 @@ class RoleDeleteView(AdminRequiredMixin, DeleteView):
     success_url = reverse_lazy('role_list')
     
     def form_valid(self, form):
-        messages.success(self.request, "Role deleted successfully!")
+        role_name = self.object.name.lower()
+        if role_name in ['superadmin', 'admin', 'administrator']:
+            messages.error(self.request, f"The '{self.object.name}' role is protected and cannot be deleted.")
+            return redirect('role_list')
+        messages.success(self.request, f"Role '{self.object.name}' deleted successfully!")
         return super().form_valid(form)
 
 
